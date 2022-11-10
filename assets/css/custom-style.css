@@ -189,7 +189,7 @@ header ul li a:hover {
 }
 
 .stack .head {
-  margin-bottom: 5vw;
+  margin-bottom: 3.5vw;
 }
 
 .stack .inner {
@@ -201,7 +201,7 @@ header ul li a:hover {
 .stack .inner .wrap {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12%, 1fr));
-  gap: 20px;
+  gap: 21px;
   justify-content: center;
   text-align: center;
 }
@@ -253,7 +253,7 @@ header ul li a:hover {
 }
 
 .stack .inner .wrap .box:first-child .img {
-  background: url(../images/schemas-stack.svg);
+  background: url(../images/schemas-stack2.svg);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -266,7 +266,7 @@ header ul li a:hover {
 }
 
 .stack .inner .wrap .box:nth-child(2) .img {
-  background: url(../images/maps-stack.svg);
+  background: url(../images/maps-stack2.svg);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -279,7 +279,7 @@ header ul li a:hover {
 }
 
 .stack .inner .wrap .box:nth-child(3) .img {
-  background: url(../images/tables-stack.svg);
+  background: url(../images/tables-stack2.svg);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -292,7 +292,7 @@ header ul li a:hover {
 }
 
 .stack .inner .wrap .box:last-child .img {
-  background: url(../images/translations-stack.svg);
+  background: url(../images/translations-stack2.svg);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
