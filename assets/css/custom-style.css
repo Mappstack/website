@@ -148,6 +148,18 @@ header ul li a:hover {
   text-decoration: underline;
 }
 
+.next {
+  width: 14px;
+  vertical-align: middle;
+  padding-bottom: 1px;
+  user-select: none;
+  -drag: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
 .banner .inner {
   display: grid;
   grid-template-columns: 20vw 1fr;
