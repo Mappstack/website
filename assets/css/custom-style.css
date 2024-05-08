@@ -1,12 +1,19 @@
 @charset "UTF-8";
 
 :root {
-  --black: #595959;
-  --white: #ffffff;
-  --pink: #FF45A8;
-  --grey: #FAFAFA;
-  --green: #00AB8E;
-  --blue: #00A2FF;
+  --color-light: #FAFAFA;
+  --color-dark: #494949;
+  --color-green: #00AB8E;
+  --border-color: #DDD;
+  --color-blue: #00A2FF;
+  --color-pink: #FF45A8;
+  --color-yellow: #FEAE00;
+  --color-red: #F44336;
+  --color-lightgray: #EDEDED;
+  --color-gray: #DEDEDE;
+  --color-darkgray: #CFCFCF;
+  --modal-overlay-color: rgba(0, 0, 0, 0.7);
+  --hover-opacity: 0.77;
 }
 
 * {
@@ -15,9 +22,17 @@
 
 body,
 html {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+  font-family: Helvetica;
+  font-weight: 100;
   margin: 0;
   padding: 0;
-  font-family: Helvetica, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
 }
 
 .contain {
@@ -27,12 +42,22 @@ html {
 }
 
 .main-btn {
-  font-size: 16px;
-  background: var(--green);
-  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding-left: 14px;
+  padding-right: 14px;
+  height: 35px;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 100;
+  background: var(--color-dark);
+  color: var(--color-light);
   text-decoration: none;
   padding: 8px 24px;
-  border-radius: 14px;
+  border: none;
+  border-radius: 1rem;
   display: inline-block;
   transition: 0.21s;
 }
@@ -43,12 +68,11 @@ html {
 }
 
 .main-wrap {
-  width: 100%;
-  background: var(--grey);
-  border: 10px solid var(--white);
-  border-bottom: 0;
-  border-radius: 1vw;
-  padding: 20px;
+  width: calc(100vw - 98px);
+  background: var(--color-lightgray);
+  margin: 49px;
+  border-radius: 49px;
+  padding: 49px;
 }
 
 .head {
@@ -60,22 +84,22 @@ html {
   font-size: clamp(30px, 2.2vw, 2.2vw);
   margin: 0;
   font-weight: 300;
-  color: var(--black);
+  color: var(--color-dark);
 }
 
 .head h4 span {
-  color: var(--pink);
+  color: var(--color-pink);
   display: inline-flex;
 }
 
 .head p {
-  color: var(--black);
+  color: var(--color-dark);
   font-size: 16px;
   font-weight: 300;
 }
 
 header {
-  background: var(--black);
+  background: var(--color-dark);
   padding: 15px 0px;
   height: 49px;
 }
@@ -114,7 +138,7 @@ header .logo span {
 
 header .logo span a {
   font-size: clamp(16px, 1vw, 1vw);
-  color: var(--white);
+  color: var(--color-light);
   text-decoration: none;
 }
 
@@ -131,13 +155,13 @@ header ul li {
   list-style-type: none;
   display: inline-block;
   margin-left: 49px;
-  color: var(--white);
+  color: var(--color-light);
   padding-bottom: 2.1px;
 }
 
 header ul li a {
   font-size: clamp(16px, 1vw, 1vw);
-  color: var(--white);
+  color: var(--color-light);
   transition: 0.21s;
   text-decoration: none;
 }
@@ -171,16 +195,16 @@ header ul li a:hover {
   font-size: 35px;
   margin: 0;
   font-weight: 300;
-  color: var(--black);
+  color: var(--color-dark);
 }
 
 .banner .inner .info h4 span {
-  color: var(--pink);
+  color: var(--color-pink);
   display: inline-flex;
 }
 
 .banner .inner .info p {
-  color: var(--black);
+  color: var(--color-dark);
   font-size: 16px;
   font-weight: 300;
 }
@@ -247,7 +271,7 @@ header ul li a:hover {
 }
 
 .stack .inner .wrap .img span {
-  color: var(--white);
+  color: var(--color-light);
   font-weight: 300;
   top: 30%;
   font-size: 16px;
@@ -256,7 +280,7 @@ header ul li a:hover {
 }
 
 .stack .inner .wrap .box p {
-  color: var(--black);
+  color: var(--color-dark);
   font-size: 16px;
   font-weight: 300;
   margin: 0;
@@ -328,7 +352,7 @@ header ul li a:hover {
   list-style-type: none;
   padding-left: 20px;
   position: relative;
-  color: var(--black);
+  color: var(--color-dark);
   font-size: 16px;
   font-weight: 300;
   margin-bottom: 10px;
@@ -336,7 +360,7 @@ header ul li a:hover {
 
 .whyus ul li::before {
   content: "•";
-  color: var(--blue);
+  color: var(--color-blue);
   font-weight: bold;
   display: inline-block;
   width: 1em;
@@ -344,11 +368,11 @@ header ul li a:hover {
 }
 
 .whyus ul li:nth-child(2)::before {
-  color: var(--pink);
+  color: var(--color-pink);
 }
 
 .whyus ul li:nth-child(3)::before {
-  color: var(--green);
+  color: var(--color-green);
 }
 
 .whyus ul li:last-child::before {
@@ -379,7 +403,7 @@ header ul li a:hover {
 }
 
 .easy .inner p {
-  color: var(--black);
+  color: var(--color-dark);
   font-size: 16px;
   font-weight: 300;
   margin: 0;
@@ -405,12 +429,12 @@ footer p {
 }
 
 @media (max-width: 767px) {
-  .contain {
-    max-width: 85vw;
+  .main-wrap {
+    border-radius: 28px;
   }
 
-  .main-btn {
-    padding: 10px;
+  .contain {
+    max-width: 85vw;
   }
 
   .banner .inner {
@@ -460,5 +484,3 @@ footer p {
     grid-gap: 10vw;
   }
 }
-
-/*# sourceMappingURL=custom-style.css.map */
