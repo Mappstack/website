@@ -3,7 +3,7 @@
   --hairline:rgba(0,0,0,0.08);--fill:rgba(118,118,128,0.12);--fill-hover:rgba(118,118,128,0.18);
   --primary:#1d1d1f;--primary-hover:#000000;--on-primary:#ffffff;
   --node-neutral:#e8e8ed;--node-neutral-text:#1d1d1f;--node-neutral-meta:#6e6e73;
-  --edge:#1d1d1f;--dots:rgba(0,0,0,0.06);--toolbar:rgba(255,255,255,0.72);
+  --edge:#1d1d1f;--dots:rgba(0,0,0,0.06);--glass:rgba(255,255,255,0.5);--glass-rim:rgba(255,255,255,0.9);
   --focus-ring:0 0 0 3px rgba(29,29,31,0.22);
   --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --error:#ff3b30;--dur:120ms;color-scheme:light;
@@ -15,22 +15,22 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--font);-
 a{color:inherit}
 h1,h2,h3,p{margin:0}
 h1,h2{text-wrap:balance}
-.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--toolbar);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--hairline)}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:linear-gradient(180deg,rgba(255,255,255,0.35),transparent) var(--glass);backdrop-filter:blur(14px) saturate(200%) brightness(1.04);-webkit-backdrop-filter:blur(14px) saturate(200%) brightness(1.04);box-shadow:inset 0 1px 0 var(--glass-rim),inset 0 -1px 0 rgba(255,255,255,0.6),0 0.5px 0 rgba(0,0,0,0.1),0 6px 24px rgba(0,0,0,0.06)}
 .nav .wrap{height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .nav__actions{display:flex;align-items:center;gap:16px}
 .navlink{text-box:trim-both cap alphabetic;font-size:15px;color:var(--text);text-decoration:none;border-radius:8px;transition:color var(--dur) ease}
 .navlink:hover{color:var(--muted)}
 .navlink:focus-visible{outline:none;box-shadow:var(--focus-ring)}
-.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:600;letter-spacing:-0.01em;text-decoration:none}
+.brand{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:600;letter-spacing:-0.01em;text-decoration:none}
 .brand img{display:block}
 .brand__name{text-box:trim-both cap alphabetic}
-.btn{display:inline-flex;align-items:center;height:36px;padding:0 18px;border:0;border-radius:980px;font:inherit;font-size:15px;text-decoration:none;cursor:pointer;background:var(--fill);color:var(--text);transition:background-color var(--dur) ease,transform var(--dur) ease}
+.btn{display:inline-flex;align-items:center;height:36px;padding:0 16px;border:0;border-radius:980px;font:inherit;font-size:15px;text-decoration:none;cursor:pointer;background:var(--fill);color:var(--text);transition:background-color var(--dur) ease,transform var(--dur) ease}
 .btn:hover{background:var(--fill-hover)}
 .btn:active{transform:scale(0.98)}
 .btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
 .btn--primary{background:var(--primary);color:var(--on-primary)}
 .btn--primary:hover{background:var(--primary-hover)}
-@supports (text-box:trim-both cap alphabetic){.btn{display:inline-block;height:auto;padding-block:calc((36px - 1cap) / 2);text-align:center;text-box:trim-both cap alphabetic}}
+@supports (text-box:trim-both cap alphabetic){.btn{display:inline-block;padding-block:calc((36px - 1cap) / 2);text-align:center;text-box:trim-both cap alphabetic}}
 .hero{padding-block:96px 48px;display:grid;gap:24px}
 .hero h1{font-size:56px;line-height:1.05;font-weight:600;letter-spacing:-0.03em}
 .lead{font-size:20px;line-height:1.4;color:var(--muted);max-width:36ch;text-wrap:balance}
@@ -40,11 +40,11 @@ h1,h2{text-wrap:balance}
 .figure__id{display:flex;align-items:baseline;gap:8px}
 .figure__id strong{font-weight:600}
 .figure__id span,.legend{font-size:12px;color:var(--muted)}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;list-style:none;margin:0;padding:0}
-.legend li{display:flex;align-items:center;gap:6px}
-.legend i{width:10px;height:10px;border-radius:3px;background:var(--c)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;list-style:none;margin:0;padding:0}
+.legend li{display:flex;align-items:center;gap:8px}
+.legend i{width:8px;height:8px;border-radius:3px;background:var(--c)}
 .legend .neutral{--c:var(--node-neutral)}
-.figure__canvas{overflow-x:auto;padding:16px;background-color:var(--canvas);background-image:radial-gradient(circle at 1px 1px,var(--dots) 1px,transparent 0);background-size:22px 22px}
+.figure__canvas{overflow-x:auto;padding:16px;background-color:var(--canvas);background-image:radial-gradient(circle at 1px 1px,var(--dots) 1px,transparent 0);background-size:24px 24px}
 .figure__canvas svg{display:block;width:100%;height:auto;min-width:680px;max-width:920px;margin:0 auto}
 .caption{padding-top:12px;font-size:12px;color:var(--muted)}
 svg text{font-family:var(--font)}
@@ -77,9 +77,9 @@ svg text{font-family:var(--font)}
 .input{width:100%;height:36px;padding:0 12px;border:0;border-radius:8px;background:var(--fill);color:var(--text);font:inherit;font-size:15px;transition:box-shadow var(--dur) ease}
 .input::placeholder{color:var(--text-2)}
 .input:focus-visible{outline:none;box-shadow:var(--focus-ring)}
-select.input{appearance:none;padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2.5 4l2.5 2.5L7.5 4' fill='none' stroke='%2386868b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:10px}
+select.input{appearance:none;padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' fill='none' stroke='%2386868b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:12px}
 select.input:invalid{color:var(--text-2)}
-.input--area{height:auto;min-height:120px;padding:10px 12px;line-height:1.5;resize:vertical}
+.input--area{height:auto;min-height:120px;padding:8px 12px;line-height:1.5;resize:vertical}
 .signup .btn{justify-self:start}
 .signup__status{font-size:12px;color:var(--error)}
 @media (pointer:coarse){.input{height:44px}.input--area{height:auto}}
@@ -100,7 +100,7 @@ select.input:invalid{color:var(--text-2)}
 @media (max-width:720px){
   .brand{font-size:18px;gap:8px}
   .nav__actions{gap:12px}
-  .nav .btn{padding:0 12px}
+  .nav .btn{padding-inline:12px}
   .signup__row{grid-template-columns:1fr}
   .wrap{padding-inline:16px}
   .hero{padding-block:56px 32px}
