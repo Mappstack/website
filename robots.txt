@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mappstack.com/sitemap.xml

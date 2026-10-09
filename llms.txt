@@ -1,0 +1,57 @@
+# Mappstack
+
+> Mappstack is an Australian software services company. Clients hire it for whole software projects, end to end, new or existing. Each system is mapped first, built from the map and checked against it, and every later change starts on the map.
+
+Mappstack takes on projects of any kind, in any industry and at any size, greenfield (new) or brownfield (existing). It is a services company, not a self-serve software product. Its maps are models of software systems, not geographic maps, and Mappstack is not a software stack installer.
+
+Why: AI writes code fast, but most of the time nobody understands that code, often not even while it is being written, let alone a month later. Code is cheap now. Understanding isn't. Mappstack keeps a map of every system it works on, so the system can be explained and checked as it changes.
+
+How a project runs:
+
+- Map: a greenfield system is designed on the map before any code is written. A brownfield system is mapped from its existing code.
+- Build: people, AI agents or both, depending on the project, build from the map and check every build against it.
+- Evolve: every change starts on the map, then is built and checked against it, so the map and the system stay in step.
+
+What the map holds:
+
+- C4 model diagrams at all four levels: system context, containers, components and code.
+- Data models (entity relationship diagrams), one per database.
+- API specs in OpenAPI 3.2 for the APIs a system provides and calls.
+- Event contracts, job schedules and state machines.
+- Business capability maps.
+
+Each part of a system is defined once and drawn by reference wherever it appears, so one edit updates every diagram that shows it. Diagrams link from the system context down to code, and from a database to its data model, an endpoint or API client to its OpenAPI spec, an event producer or consumer to its event contract, a job to its schedule, a status field to its state machine and a code type to its data model entity.
+
+How the map is checked:
+
+- Every diagram save, whether a person or an AI agent makes it, is validated against its notation's enforced rules, including the official OpenAPI 3.2 schema for API specs. A save that breaks one is rejected. House-style findings are reported, not blocked.
+- A project audit re-checks every diagram and lists the map's gaps: diagrams that break a rule, parts no diagram draws, parts still missing their detailed diagram, decisions still marked TBD, style findings, and, once building starts, parts not yet tied to a repository or code path.
+- Whoever builds the system checks the code against the map.
+
+What a project gets:
+
+- Understood in minutes: start with the whole picture and zoom in only where needed.
+- Never out of sync: each part is defined once, so every diagram updates together.
+- Gaps found early: missing pieces show up in the design, not in production.
+- Nothing starts from zero: proven building blocks, such as Stackure for passwordless auth, and experience from past and present projects.
+
+How engagements work:
+
+- Who does the work: chosen per project, as in Build above. Clients don't need to manage that unless they have a preference. Trade-offs come down to time, money and quality.
+- Engagement model: tailored to each client, from a handover at launch to Mappstack running, hosting and maintaining the system.
+- Location: remote, with clients anywhere. In-person visits in Australia, India and the EU when needed.
+- Technology: fit for purpose. Any stack, or the client's own when they require it.
+
+The internal tool: the map lives in Mappstack's own tool at app.mappstack.com. It is internal, not sold as a product. The Sign In link on mappstack.com opens it. People edit maps in a web editor, and agents read and write the same map through an MCP (Model Context Protocol) server, under the same checks. A map can be exported as a single offline HTML file, a PDF, or a ZIP of diagram images, OpenAPI YAML and Markdown. Whether a client gets access to their project's map depends on the engagement.
+
+The company: Mappstack is the registered business name of SY Innovations Pty Ltd, an Australian private company (ABN 38 668 523 760). Stackure, passwordless auth for B2B apps, is also from Mappstack.
+
+## Start a project
+
+- [Start a Project](https://stackure.com/signup?account_id=3df5678e-9c26-4384-9c51-7ae628b7f46a): apply to Mappstack for a project. Enter an email to get a one-hour link to a short application form. Every application is read and answered by email. The form runs on stackure.com, Mappstack's own auth product.
+
+## Optional
+
+- [Stackure](https://stackure.com/): passwordless auth for B2B apps, also from Mappstack
+- [Mappstack on GitHub](https://github.com/Mappstack)
+- [Mappstack on LinkedIn](https://www.linkedin.com/company/mappstack/)

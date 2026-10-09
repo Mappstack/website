@@ -98,3 +98,4 @@ svg text{font-family:var(--font)}
   .steps,.points{grid-template-columns:1fr}
   .close{padding-block:80px 64px}
 }
+@media (max-width:359px){.brand__name{display:none}}
