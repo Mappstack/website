@@ -14,7 +14,7 @@ How a project runs:
 
 What the map holds:
 
-- C4 model diagrams at all four levels: system context, containers, components and code.
+- C4 model diagrams at all 4 levels: system context, containers, components and code.
 - Data models (entity relationship diagrams), one per database.
 - API specs in OpenAPI 3.2 for the APIs a system provides and calls.
 - Event contracts, job schedules and state machines.
@@ -25,7 +25,7 @@ Each part of a system is defined once and drawn by reference wherever it appears
 How the map is checked:
 
 - Every diagram save, whether a person or an AI agent makes it, is validated against its notation's enforced rules, including the official OpenAPI 3.2 schema for API specs. A save that breaks one is rejected. House-style findings are reported, not blocked.
-- A project audit re-checks every diagram and lists the map's gaps: diagrams that break a rule, parts no diagram draws, parts still missing their detailed diagram, decisions still marked TBD, style findings, and, once building starts, parts not yet tied to a repository or code path.
+- A project audit re-checks every diagram and lists the map's gaps: diagrams that break a rule, parts no diagram draws, parts still missing their detailed diagram, decisions still marked TBD, style findings and, once building starts, parts not yet tied to a repository or code path.
 - Whoever builds the system checks the code against the map.
 
 What a project gets:
@@ -42,13 +42,13 @@ How engagements work:
 - Location: remote, with clients anywhere. In-person visits in Australia, India and the EU when needed.
 - Technology: fit for purpose. Any stack, or the client's own when they require it.
 
-The internal tool: the map lives in Mappstack's own tool at app.mappstack.com. It is internal, not sold as a product. The Sign In link on mappstack.com opens it. People edit maps in a web editor, and agents read and write the same map through an MCP (Model Context Protocol) server, under the same checks. A map can be exported as a single offline HTML file, a PDF, or a ZIP of diagram images, OpenAPI YAML and Markdown. Whether a client gets access to their project's map depends on the engagement.
+The internal tool: the map lives in Mappstack's own tool at app.mappstack.com. It is internal, not sold as a product. The Sign In link on mappstack.com opens it. People edit maps in a web editor, and agents read and write the same map through an MCP (Model Context Protocol) server, under the same checks. A map can be exported as a single offline HTML file, a PDF or a ZIP of diagram images, OpenAPI YAML and Markdown. Whether a client gets access to their project's map depends on the engagement.
 
 The company: Mappstack is the registered business name of SY Innovations Pty Ltd, an Australian private company (ABN 38 668 523 760). Stackure, passwordless auth for B2B apps, is also from Mappstack.
 
-## Start a project
+## Start a Project
 
-- [Start a Project](https://stackure.com/signup?account_id=3df5678e-9c26-4384-9c51-7ae628b7f46a): apply to Mappstack for a project. Enter an email to get a one-hour link to a short application form. Every application is read and answered by email. The form runs on stackure.com, Mappstack's own auth product.
+- [Start a Project](https://stackure.com/signup?account_id=3df5678e-9c26-4384-9c51-7ae628b7f46a): apply to Mappstack for a project. Enter an email to get a 1-hour link to a short application form. Every application is read and answered by email. The form runs on stackure.com, Mappstack's own auth product.
 
 ## Optional
 
