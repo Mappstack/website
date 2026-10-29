@@ -44,6 +44,13 @@
   --color-mark-yellow:var(--base-mark-yellow);
   --color-mark-pink:var(--base-mark-pink);
 
+  --color-ring-1-start:var(--base-ring-1-start);
+  --color-ring-1-end:var(--base-ring-1-end);
+  --color-ring-2-start:var(--base-ring-2-start);
+  --color-ring-2-end:var(--base-ring-2-end);
+  --color-ring-3-start:var(--base-ring-3-start);
+  --color-ring-3-end:var(--base-ring-3-end);
+
   --color-canvas-dot:rgba(0,0,0,0.04);
 
   --color-diagram-blue:var(--base-blue);
@@ -124,6 +131,13 @@
     --color-avatar-end:var(--base-gray-900);
 
     --color-canvas-dot:rgba(255,255,255,0.08);
+
+    --color-ring-1-start:var(--base-ring-1-start-dark);
+    --color-ring-1-end:var(--base-ring-1-end-dark);
+    --color-ring-2-start:var(--base-ring-2-start-dark);
+    --color-ring-2-end:var(--base-ring-2-end-dark);
+    --color-ring-3-start:var(--base-ring-3-start-dark);
+    --color-ring-3-end:var(--base-ring-3-end-dark);
 
     --color-diagram-blue:var(--base-blue-dark);
     --color-diagram-indigo:var(--base-indigo-dark);

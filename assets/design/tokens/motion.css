@@ -2,7 +2,9 @@
   --duration-state:120ms;
   --duration-move:200ms;
   --duration-spin:1s;
+  --duration-reveal:800ms;
   --delay-loading:400ms;
+  --delay-guard:200ms;
   --duration-notice:1600ms;
   --ease-standard:ease;
   --ease-spring:cubic-bezier(0.2,0.9,0.3,1.1);
@@ -13,6 +15,7 @@
   :root{
     --duration-state:0ms;
     --duration-move:0ms;
+    --duration-reveal:0ms;
     --press-scale:1;
   }
 }
