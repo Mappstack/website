@@ -1,0 +1,17 @@
+:root{
+  --duration-state:120ms;
+  --duration-move:200ms;
+  --duration-spin:1s;
+  --delay-loading:400ms;
+  --ease-standard:ease;
+  --ease-spring:cubic-bezier(0.2,0.9,0.3,1.1);
+  --press-scale:0.98;
+}
+
+@media (prefers-reduced-motion:reduce){
+  :root{
+    --duration-state:0ms;
+    --duration-move:0ms;
+    --press-scale:1;
+  }
+}

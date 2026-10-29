@@ -1,0 +1,44 @@
+:root{
+  --radius-4:4px;
+  --radius-8:8px;
+  --radius-12:12px;
+  --radius-16:16px;
+  --radius-24:24px;
+  --radius-pill:980px;
+
+  --size-control-sm:1.75rem;
+  --size-control:2.25rem;
+  --size-control-lg:2.75rem;
+  --size-row:2.75rem;
+  --size-bar:3.5rem;
+  --size-bar-compact:2.75rem;
+  --size-icon-sm:0.75rem;
+  --size-icon:1rem;
+  --size-icon-lg:1.5rem;
+  --size-glyph:2rem;
+  --size-avatar:2.25rem;
+  --size-avatar-lg:5rem;
+  --size-spinner-lg:4.5rem;
+  --size-sidebar:15rem;
+  --size-hairline:1px;
+  --size-ring:3px;
+  --size-ring-offset:2px;
+  --size-stroke:1.5px;
+  --size-stroke-bold:2px;
+  --size-inset:2px;
+
+  --width-alert:17rem;
+  --width-dialog:26rem;
+  --width-dialog-wide:36rem;
+  --width-select:13.75rem;
+  --width-reading:45rem;
+  --width-page:60rem;
+  --width-page-wide:67.5rem;
+  --width-content:80rem;
+}
+
+@media (pointer:coarse){
+  :root{
+    --size-control:2.75rem;
+  }
+}

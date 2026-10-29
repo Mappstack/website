@@ -5,38 +5,38 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Page Not Found · Mappstack</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="white" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="black" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/icons/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/design/styles.css">
 <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-<body>
-<header class="nav">
-  <div class="wrap">
-    <a class="brand" href="/" aria-label="Mappstack home">
-      <img src="/assets/icons/icon.svg" alt="" width="20" height="20">
-      <span class="brand__name">Mappstack</span>
+<body class="site">
+<a class="skip-link" href="#main">Skip to Content</a>
+<header class="navbar">
+  <div class="navbar__left">
+    <a class="wordmark wordmark--lg" href="/" aria-label="Mappstack home">
+      <svg class="wordmark__mark" viewBox="0 0 10 10" aria-hidden="true"><circle cx="2" cy="2" r="2" style="fill:var(--color-mark-blue)"/><circle cx="8" cy="2" r="2" style="fill:var(--color-mark-pink)"/><circle cx="2" cy="8" r="2" style="fill:var(--color-mark-green)"/><circle cx="8" cy="8" r="2" style="fill:var(--color-mark-yellow)"/></svg>
+      <span class="wordmark__name">Mappstack</span>
     </a>
-    <nav class="nav__actions">
-      <a class="navlink" href="https://app.mappstack.com/">Sign In</a>
-      <a class="btn btn--primary" href="https://stackure.com/signup?account_id=3df5678e-9c26-4384-9c51-7ae628b7f46a" target="_blank">Start a Project</a>
-    </nav>
   </div>
+  <nav class="navbar__right">
+    <a class="btn btn--plain" href="https://app.mappstack.com/">Sign In</a>
+      <a class="btn btn--primary" href="https://stackure.com/signup?account_id=3df5678e-9c26-4384-9c51-7ae628b7f46a" target="_blank">Start a Project</a>
+  </nav>
 </header>
-<main class="wrap">
-  <section class="hero">
-    <h1>Page not found.</h1>
-    <p class="lead">This page isn't on the map.</p>
-    <div class="actions">
-      <a class="btn btn--primary" href="/">Back to Mappstack</a>
-    </div>
-  </section>
+<main id="main" class="outcome">
+  <p class="outcome__code">Error 404</p>
+  <h1 class="outcome__title">Page Not Found</h1>
+  <p class="outcome__message">This page isn't on the map.</p>
+  <div class="outcome__actions"><a class="btn btn--primary btn--lg" href="/">Back to Mappstack</a></div>
 </main>
-<footer class="footer">
-  <div class="wrap">
-    <span>Also from Mappstack: <a href="https://stackure.com">Stackure</a>, passwordless auth for B2B apps.</span>
-    <span><a href="/faq">FAQ</a> · © 2026 SY Innovations Pty Ltd</span>
+<footer class="footer footer--rule">
+  <div class="wrap footer__row">
+    <p>Also from Mappstack: <a href="https://stackure.com">Stackure</a>, passwordless auth for B2B apps.</p>
+    <p><a href="/faq">FAQ</a> · © 2026 SY Innovations Pty Ltd</p>
   </div>
 </footer>
 </body>
