@@ -12,7 +12,7 @@
   --color-surface:var(--base-white);
   --color-surface-raised:var(--base-white);
   --color-surface-sunken:var(--base-gray-100);
-  --color-surface-canvas:var(--base-gray-50);
+  --color-surface-canvas:var(--base-white);
 
   --color-fill-subtle:rgba(118,118,128,0.08);
   --color-fill:rgba(118,118,128,0.12);
@@ -29,14 +29,12 @@
   --color-backdrop:rgba(0,0,0,0.32);
 
   --color-error:var(--base-red);
-  --color-error-text:var(--base-red-text);
-  --color-error-fill:rgba(255,59,48,0.12);
+  --color-error-text:var(--base-red-accessible);
+  --color-on-error:var(--base-white);
   --color-warn:var(--base-orange);
-  --color-warn-text:var(--base-orange-text);
-  --color-warn-fill:rgba(255,149,0,0.12);
+  --color-warn-text:var(--base-orange-accessible);
   --color-success:var(--base-green);
-  --color-success-text:var(--base-green-text);
-  --color-success-fill:rgba(52,199,89,0.12);
+  --color-success-text:var(--base-green-accessible);
 
   --color-avatar-start:var(--base-gray-300);
   --color-avatar-end:var(--base-gray-350);
@@ -116,20 +114,28 @@
     --color-backdrop:rgba(0,0,0,0.32);
 
     --color-error:var(--base-red-dark);
-    --color-error-text:var(--base-red-text-dark);
-    --color-error-fill:rgba(255,69,58,0.18);
+    --color-error-text:var(--base-red-accessible-dark);
     --color-warn:var(--base-orange-dark);
-    --color-warn-text:var(--base-orange-dark);
-    --color-warn-fill:rgba(255,159,10,0.18);
+    --color-warn-text:var(--base-orange-accessible-dark);
     --color-success:var(--base-green-dark);
-    --color-success-text:var(--base-green-dark);
-    --color-success-fill:rgba(48,209,88,0.18);
+    --color-success-text:var(--base-green-accessible-dark);
 
     --color-avatar-start:var(--base-gray-800);
     --color-avatar-end:var(--base-gray-900);
 
     --color-canvas-dot:rgba(255,255,255,0.08);
 
+    --color-diagram-blue:var(--base-blue-dark);
+    --color-diagram-indigo:var(--base-indigo-dark);
+    --color-diagram-purple:var(--base-purple-dark);
+    --color-diagram-pink:var(--base-pink-dark);
+    --color-diagram-red:var(--base-red-dark);
+    --color-diagram-orange:var(--base-orange-dark);
+    --color-diagram-yellow:var(--base-yellow-dark);
+    --color-diagram-green:var(--base-green-dark);
+    --color-diagram-mint:var(--base-mint-dark);
+    --color-diagram-teal:var(--base-teal-dark);
+    --color-diagram-brown:var(--base-brown-dark);
     --color-diagram-neutral:var(--base-gray-900);
     --color-diagram-neutral-text:var(--base-gray-100);
     --color-diagram-band:var(--base-gray-925);
@@ -145,5 +151,67 @@
   :root{
     --color-hairline:var(--color-border-strong);
     --color-fill:var(--color-fill-strong);
+    --color-text-secondary:var(--base-gray-800);
+    --color-error:var(--base-red-accessible);
+    --color-warn:var(--base-orange-accessible);
+    --color-success:var(--base-green-accessible);
+    --color-diagram-blue:var(--base-blue-accessible);
+    --color-diagram-blue-text:var(--base-white);
+    --color-diagram-indigo:var(--base-indigo-accessible);
+    --color-diagram-indigo-text:var(--base-white);
+    --color-diagram-purple:var(--base-purple-accessible);
+    --color-diagram-purple-text:var(--base-white);
+    --color-diagram-pink:var(--base-pink-accessible);
+    --color-diagram-pink-text:var(--base-white);
+    --color-diagram-red:var(--base-red-accessible);
+    --color-diagram-red-text:var(--base-white);
+    --color-diagram-orange:var(--base-orange-accessible);
+    --color-diagram-orange-text:var(--base-white);
+    --color-diagram-yellow:var(--base-yellow-accessible);
+    --color-diagram-yellow-text:var(--base-white);
+    --color-diagram-green:var(--base-green-accessible);
+    --color-diagram-green-text:var(--base-white);
+    --color-diagram-mint:var(--base-mint-accessible);
+    --color-diagram-mint-text:var(--base-white);
+    --color-diagram-teal:var(--base-teal-accessible);
+    --color-diagram-teal-text:var(--base-white);
+    --color-diagram-brown:var(--base-brown-accessible);
+    --color-diagram-brown-text:var(--base-white);
+    --color-diagram-gray:var(--base-gray-accessible);
+    --color-diagram-gray-text:var(--base-white);
+  }
+}
+
+@media (prefers-contrast:more) and (prefers-color-scheme:dark){
+  :root{
+    --color-text-secondary:var(--base-gray-350);
+    --color-error:var(--base-red-accessible-dark);
+    --color-on-error:var(--base-ink);
+    --color-warn:var(--base-orange-accessible-dark);
+    --color-success:var(--base-green-accessible-dark);
+    --color-diagram-blue:var(--base-blue-accessible-dark);
+    --color-diagram-blue-text:var(--base-ink);
+    --color-diagram-indigo:var(--base-indigo-accessible-dark);
+    --color-diagram-indigo-text:var(--base-ink);
+    --color-diagram-purple:var(--base-purple-accessible-dark);
+    --color-diagram-purple-text:var(--base-ink);
+    --color-diagram-pink:var(--base-pink-accessible-dark);
+    --color-diagram-pink-text:var(--base-ink);
+    --color-diagram-red:var(--base-red-accessible-dark);
+    --color-diagram-red-text:var(--base-ink);
+    --color-diagram-orange:var(--base-orange-accessible-dark);
+    --color-diagram-orange-text:var(--base-ink);
+    --color-diagram-yellow:var(--base-yellow-accessible-dark);
+    --color-diagram-yellow-text:var(--base-ink);
+    --color-diagram-green:var(--base-green-accessible-dark);
+    --color-diagram-green-text:var(--base-ink);
+    --color-diagram-mint:var(--base-mint-accessible-dark);
+    --color-diagram-mint-text:var(--base-ink);
+    --color-diagram-teal:var(--base-teal-accessible-dark);
+    --color-diagram-teal-text:var(--base-ink);
+    --color-diagram-brown:var(--base-brown-accessible-dark);
+    --color-diagram-brown-text:var(--base-ink);
+    --color-diagram-gray:var(--base-gray-accessible-dark);
+    --color-diagram-gray-text:var(--base-ink);
   }
 }
