@@ -71,4 +71,17 @@
   --base-mark-green:#00ab8e;
   --base-mark-yellow:#feae00;
   --base-mark-pink:#ff45a8;
+
+  --base-ring-1-start:#6d28d9;
+  --base-ring-1-end:#2563eb;
+  --base-ring-2-start:#db2777;
+  --base-ring-2-end:#d97706;
+  --base-ring-3-start:#047857;
+  --base-ring-3-end:#0e8a8f;
+  --base-ring-1-start-dark:#c084fc;
+  --base-ring-1-end-dark:#7dd3fc;
+  --base-ring-2-start-dark:#fb7185;
+  --base-ring-2-end-dark:#fcd34d;
+  --base-ring-3-start-dark:#2dd4bf;
+  --base-ring-3-end-dark:#86efac;
 }
