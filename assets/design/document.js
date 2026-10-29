@@ -1,8 +1,15 @@
 (function () {
     const iconsURL = new URL("icons.svg", document.currentScript.src).pathname;
 
+    const MillisecondsPerMinute = 60000;
+
     function readToken(name) {
         return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+    }
+
+    function readNoticeDuration(message) {
+        const words = message.trim().split(/\s+/).length;
+        return Math.max(readToken("--duration-notice"), words / readToken("--reading-words-per-minute") * MillisecondsPerMinute);
     }
 
     function buildIcon(name) {
@@ -15,7 +22,9 @@
         toast.setAttribute("role", "status");
         toast.textContent = message;
         document.body.append(toast);
-        setTimeout(function () { toast.remove(); }, readToken("--duration-notice"));
+        let timer = setTimeout(function () { toast.remove(); }, readNoticeDuration(message));
+        toast.addEventListener("pointerenter", function () { clearTimeout(timer); });
+        toast.addEventListener("pointerleave", function () { timer = setTimeout(function () { toast.remove(); }, readNoticeDuration(message)); });
     }
 
     function addHeadingAnchors() {

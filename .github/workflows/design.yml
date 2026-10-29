@@ -1,0 +1,20 @@
+name: Design
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: assets/design
+    steps:
+      - uses: actions/checkout@v4
+      - run: shasum -a 256 --check --quiet checksums.txt
+      - run: diff <(sed 's/^[0-9a-f]*  //' checksums.txt | sort) <(find . -type f ! -name checksums.txt | sort)
