@@ -18,3 +18,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: shasum -a 256 --check --quiet checksums.txt
       - run: diff <(sed 's/^[0-9a-f]*  //' checksums.txt | sort) <(find . -type f ! -name checksums.txt | sort)
+      - run: sh theme.sh "$GITHUB_WORKSPACE" $(cat theme-colors.txt)
