@@ -1,0 +1,47 @@
+:root{
+  --base-white:#ffffff;
+  --base-black:#000000;
+  --base-ink:#1d1d1f;
+  --base-gray-50:#fafafa;
+  --base-gray-100:#f5f5f7;
+  --base-gray-150:#ebebf0;
+  --base-gray-200:#e8e8ed;
+  --base-gray-250:#e1e1ea;
+  --base-gray-300:#d6d6e0;
+  --base-gray-350:#b5b5ba;
+  --base-gray-450:#a8a8ad;
+  --base-gray-550:#8e8e93;
+  --base-gray-600:#86868b;
+  --base-gray-700:#6e6e73;
+  --base-gray-750:#636366;
+  --base-gray-800:#545458;
+  --base-gray-850:#48484a;
+  --base-gray-900:#3a3a3c;
+  --base-gray-925:#2c2c2e;
+  --base-gray-950:#1c1c1e;
+
+  --base-blue:#0071e3;
+  --base-indigo:#5856d6;
+  --base-purple:#a547d1;
+  --base-violet:#7d3fa8;
+  --base-pink:#ff2d55;
+  --base-red:#ff3b30;
+  --base-red-dark:#ff453a;
+  --base-red-text:#c80010;
+  --base-red-text-dark:#ff857d;
+  --base-orange:#ff9500;
+  --base-orange-dark:#ff9f0a;
+  --base-orange-text:#bd3200;
+  --base-yellow:#ffcc00;
+  --base-green:#34c759;
+  --base-green-dark:#30d158;
+  --base-green-text:#1f7a34;
+  --base-mint:#00c7be;
+  --base-teal:#30b0c7;
+  --base-brown:#a2845e;
+
+  --base-mark-blue:#00a2ff;
+  --base-mark-green:#00ab8e;
+  --base-mark-yellow:#feae00;
+  --base-mark-pink:#ff45a8;
+}

@@ -1,0 +1,10 @@
+:root{
+  --page-background:var(--color-background);
+  --page-text-size:var(--text-15);
+  --page-meta-size:var(--text-13);
+  --page-title-size:var(--text-40);
+  --page-title-tracking:var(--tracking-40);
+  --page-width:var(--width-page-wide);
+  --card-border-color:var(--color-hairline);
+  --page-gutter:var(--space-48);
+}
