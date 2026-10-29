@@ -1,6 +1,9 @@
 (function () {
     const iconsURL = new URL("icons.svg", document.currentScript.src).pathname;
-    const wordsPerMinute = 230;
+
+    function readToken(name) {
+        return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+    }
 
     function buildIcon(name) {
         return '<svg class="icon" aria-hidden="true"><use href="' + iconsURL + "#" + name + '"/></svg>';
@@ -12,7 +15,7 @@
         toast.setAttribute("role", "status");
         toast.textContent = message;
         document.body.append(toast);
-        setTimeout(function () { toast.remove(); }, 1600);
+        setTimeout(function () { toast.remove(); }, readToken("--duration-notice"));
     }
 
     function addHeadingAnchors() {
@@ -45,7 +48,7 @@
                 navigator.clipboard.writeText(pre.textContent).then(function () {
                     button.innerHTML = buildIcon("check");
                     showToast("Code Copied");
-                    setTimeout(function () { button.innerHTML = buildIcon("duplicate"); }, 1600);
+                    setTimeout(function () { button.innerHTML = buildIcon("duplicate"); }, readToken("--duration-notice"));
                 });
             });
             pre.replaceWith(block);
@@ -58,7 +61,7 @@
         const body = document.querySelector(".doc__body");
         if (!target || !body) return;
         const words = body.textContent.trim().split(/\s+/).length;
-        target.textContent = Math.max(1, Math.round(words / wordsPerMinute)) + " min read";
+        target.textContent = Math.max(1, Math.round(words / readToken("--reading-words-per-minute"))) + " min read";
     }
 
     function trackContents() {
