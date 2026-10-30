@@ -9,13 +9,13 @@ permissions:
 
 jobs:
   guard:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     defaults:
       run:
         shell: bash
         working-directory: assets/design
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: shasum -a 256 --check --quiet checksums.txt
       - run: diff <(sed 's/^[0-9a-f]*  //' checksums.txt | sort) <(find . -type f ! -name checksums.txt | sort)
       - run: sh theme.sh "$GITHUB_WORKSPACE" $(cat theme-colors.txt)
