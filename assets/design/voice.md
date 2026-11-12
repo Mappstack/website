@@ -27,7 +27,7 @@ Plain, exact, calm. Say what it is or what happens, in as few words as it takes,
 | Selling: sites, posts | Short lines. A contrast when there is one. | Code is cheap now. Understanding isn't. |
 | Using: app screens | Say what to do. | Enter the code from the email, or open its link. |
 | Something went wrong | What happened, then what to do. | This link expired. Request a new one. |
-| Emails | Fewest words and paragraphs. Polite. No small talk, no hedging. | Please send the quote. Thank you. |
+| Emails | Fewest words and paragraphs. Polite. No small talk, no hedging. The product's name is the sender and starts the subject. | Stackure · New signup |
 | Policies | Complete and literal, still plain. | We do not sell personal information. |
 
 ## Writing rules
