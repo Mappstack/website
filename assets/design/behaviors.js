@@ -17,7 +17,7 @@
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     const finePointer = matchMedia("(pointer: fine)");
     const phone = matchMedia("(max-width: 720px)");
-    const apple = /Mac|iPhone|iPad/.test(navigator.userAgentData ? navigator.userAgentData.platform : navigator.platform);
+    const apple = /mac|iphone|ipad/i.test(navigator.userAgentData ? navigator.userAgentData.platform : navigator.platform);
 
     let byKeyboard = false;
 
