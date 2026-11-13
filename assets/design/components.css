@@ -491,7 +491,7 @@ button.avatar{width:var(--size-control);height:var(--size-control);border:0;padd
 .trend__band{fill:var(--color-fill);}
 .trend__line{stroke:var(--color-text);stroke-width:var(--size-stroke-bold);animation:trend-draw var(--duration-reveal) var(--ease-standard) backwards;}
 .trend__point{animation:fade-in var(--duration-move) var(--ease-standard) var(--duration-reveal) backwards;}
-@keyframes trend-draw{from{clip-path:inset(0 100% 0 0);}}
+@keyframes trend-draw{from{clip-path:inset(0 100% 0 0);}to{clip-path:inset(0 0 0 0);}}
 .trend__point{text-decoration:none;}
 .trend__point:focus-visible{outline:none;}
 .trend__hit{fill:transparent;}
