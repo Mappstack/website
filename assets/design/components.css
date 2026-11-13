@@ -54,7 +54,7 @@ mark{background:transparent;color:inherit;font-weight:var(--weight-semibold);}
 .field--inline > .field__label{flex:0 0 32%;font-size:inherit;color:var(--color-text);}
 .field--inline > :not(.field__label){flex:1 1 auto;min-width:0;}
 .list .field{min-height:var(--size-row);padding:var(--space-8) var(--space-16);}
-.input{width:100%;height:var(--size-control);margin:0;padding:0 var(--space-12);border:0;border-radius:var(--radius-8);background:var(--color-fill);color:var(--color-text);font-family:var(--font-sans);font-size:var(--text-17);transition:box-shadow var(--duration-state) var(--ease-standard);-webkit-appearance:none;appearance:none;}
+.input{width:100%;height:var(--size-control);margin:0;padding:0 var(--space-12);border:0;border-radius:var(--radius-8);background:var(--color-fill);color:var(--color-text);font-family:var(--font-sans);font-size:var(--text-17);transition:box-shadow var(--duration-state) var(--ease-standard),border-color var(--duration-state) var(--ease-standard);-webkit-appearance:none;appearance:none;}
 .input::placeholder{color:var(--color-text-secondary);opacity:1;}
 textarea.input{height:auto;min-height:calc(var(--size-control) * 3);padding:var(--space-8) var(--space-12);line-height:var(--leading-body);resize:vertical;}
 .input--inset{height:auto;min-height:var(--size-control-sm);padding:0 var(--space-8);margin:0 calc(var(--space-8) * -1);width:calc(100% + var(--space-16));background:transparent;font-size:inherit;}
@@ -62,6 +62,8 @@ textarea.input{height:auto;min-height:calc(var(--size-control) * 3);padding:var(
 .input:disabled{opacity:var(--opacity-disabled);cursor:not-allowed;}
 .input:read-only{color:var(--color-text-secondary);}
 .input[aria-invalid="true"],.is-invalid .input{box-shadow:0 0 0 var(--size-stroke-bold) var(--color-error);}
+.input--prominent[aria-invalid="true"],.is-invalid .input--prominent{border-color:var(--color-error);}
+.input[aria-invalid="true"]:focus-visible,.is-invalid .input:focus-visible{outline-color:color-mix(in srgb,var(--color-error) 50%,transparent);}
 .input:focus-visible,.select__input:focus-visible{outline-offset:0;}
 .list .input:focus-visible,.list .select__input:focus-visible{outline-offset:calc(var(--size-ring) * -1);}
 .input--inset:focus-visible{outline:none;}
