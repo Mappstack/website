@@ -254,7 +254,7 @@ button.chip:active,a.chip:active,label.chip:active{background:var(--color-fill-s
 .group__head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-8);margin:0 var(--space-16) var(--space-8);}
 .group__head > .group__header{margin:0;}
 .group__header + .group{margin-top:0;}
-.group:has(.list__row[hidden]):not(:has(.list__row:not([hidden]))){display:none;}
+.group:has(.list__row[hidden]):not(:has(.list__row:not([hidden]))),.list:has(> .list__row[hidden]):not(:has(> .list__row:not([hidden]))){display:none;}
 .hint{margin:0 var(--space-16) var(--space-16);font-size:var(--text-13);line-height:var(--leading-body);text-align:center;color:var(--color-text-secondary);}
 .list{--list-rule-inset:var(--space-16);margin:0;padding:0;list-style:none;overflow:hidden;background:var(--color-surface);border:var(--size-hairline) solid var(--card-border-color);border-radius:var(--radius-12);}
 .list--plain{background:transparent;border:0;border-radius:0;}
@@ -367,10 +367,6 @@ a.cell:active,button.cell:active,label.cell:active,.cell:has(.cell__link:active)
 .menu-item--code{font-family:var(--font-mono);font-size:var(--text-13);}
 .menu-item:disabled{opacity:var(--opacity-disabled);cursor:not-allowed;background:transparent;}
 .menu-divider{margin:var(--space-4) 0;border:0;border-top:var(--size-hairline) solid var(--color-hairline);}
-.menu-anchor{position:relative;display:inline-block;}
-.menu[data-menu]{position:absolute;top:calc(100% + var(--space-8));left:0;z-index:var(--z-menu);display:none;min-width:var(--width-select);}
-.menu--end[data-menu]{right:0;left:auto;}
-.menu[data-menu].is-open{display:block;}
 
 .dialog{width:min(var(--width-dialog),calc(100vw - var(--space-32)));max-height:calc(100dvh - var(--space-32));padding:var(--space-24);border:var(--size-hairline) solid var(--color-hairline);border-radius:var(--radius-16);background:var(--color-surface-raised);color:var(--color-text);box-shadow:var(--shadow-float);overflow:auto;overscroll-behavior:contain;transition:opacity var(--duration-state) var(--ease-standard),translate var(--duration-state) var(--ease-standard),overlay var(--duration-state) allow-discrete,display var(--duration-state) allow-discrete;}
 .dialog:not([open]){opacity:0;translate:0 var(--space-8);}
@@ -427,7 +423,7 @@ a.cell:active,button.cell:active,label.cell:active,.cell:has(.cell__link:active)
 .outcome__code{margin:0;font-size:var(--text-12);line-height:var(--leading-ui);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:var(--color-text-secondary);}
 .outcome__note{margin:0;font-size:var(--text-13);color:var(--color-text-secondary);}
 .outcome__actions{display:flex;flex-direction:column;gap:var(--space-12);width:100%;max-width:var(--width-alert);margin-top:var(--space-16);}
-.outcome__actions .btn{width:100%;}
+.outcome__actions .btn:not(.btn--icon){width:100%;}
 .outcome .list{margin-top:var(--space-8);}
 .outcome__actions .list{margin-bottom:var(--space-4);}
 .dialog .outcome{gap:var(--space-8);max-width:none;padding:var(--space-24) var(--space-16) var(--space-16);}
@@ -638,6 +634,8 @@ button.avatar{width:var(--size-control);height:var(--size-control);border:0;padd
 .kbd{display:inline-flex;align-items:center;justify-content:center;min-width:calc(var(--size-icon) + var(--space-4));height:calc(var(--size-icon) + var(--space-4));padding:0 var(--space-4);border:var(--size-hairline) solid var(--color-border-strong);border-radius:var(--radius-4);color:var(--color-text-secondary);font-family:var(--font-sans);font-size:var(--text-12);line-height:1;font-variant-numeric:tabular-nums;}
 .kbd + .kbd{margin-left:var(--space-4);}
 .btn > .kbd{margin-left:var(--space-8);}
+@media (hover:hover){.btn--icon:has(> .kbd){width:auto;padding:0 var(--space-12);border-radius:var(--radius-pill);}}
+.btn:has(> input:focus-visible){outline:var(--size-ring) solid var(--color-focus);outline-offset:var(--size-ring-offset);}
 @media (hover:none){.btn > .kbd,.search > .kbd{display:none;}}
 
 .divider{display:block;flex-shrink:0;width:100%;height:var(--size-hairline);border:0;background:var(--color-hairline);}

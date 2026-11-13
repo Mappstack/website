@@ -11,7 +11,7 @@
     const DismissShare = 0.25;
     const DismissSpeed = 0.5;
     const Focusable = "a[href], button:not(:disabled), input:not(:disabled, [type=hidden]), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex='-1'])";
-    const Fields = "input:not([type=hidden], [type=checkbox], [type=radio], [type=button], [type=submit], [type=reset]), select, textarea";
+    const Fields = "input:not([type=hidden], [type=checkbox], [type=radio], [type=button], [type=submit], [type=reset], [type=file]), select, textarea";
     const TypingTypes = new Set(["text", "search", "email", "url", "tel", "password", "number", "date", "datetime-local", "month", "time", "week"]);
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -20,7 +20,6 @@
     const apple = /Mac|iPhone|iPad/.test(navigator.userAgentData ? navigator.userAgentData.platform : navigator.platform);
 
     let byKeyboard = false;
-    let status = null;
 
     function readToken(name) {
         return parseFloat(getComputedStyle(root).getPropertyValue(name));
@@ -51,26 +50,43 @@
         });
     }
 
+    function statusIn(container) {
+        let region = container.querySelector(":scope > [data-announcer]");
+        if (region) return region;
+        region = document.createElement("p");
+        region.className = "visually-hidden";
+        region.setAttribute("role", "status");
+        region.dataset.announcer = "";
+        container.append(region);
+        return region;
+    }
+
+    function topModal() {
+        const modals = Array.from(document.querySelectorAll("dialog:modal"));
+        return modals.find(function (modal) { return modal.contains(document.activeElement); }) || modals.at(-1);
+    }
+
     function announce(text) {
-        if (!status) {
-            status = document.createElement("p");
-            status.className = "visually-hidden";
-            status.setAttribute("role", "status");
-            document.body.append(status);
-        }
-        status.textContent = "";
-        requestAnimationFrame(function () { status.textContent = text; });
+        const region = statusIn(topModal() || document.body);
+        region.textContent = "";
+        requestAnimationFrame(function () { region.textContent = text; });
     }
 
     function focusFirst(container) {
         const preferred = Array.from(container.querySelectorAll("[autofocus]")).find(function (element) { return !element.matches("button, [role=button]") && isShown(element); });
         const field = !container.matches(".dialog--alert") && (byKeyboard || finePointer.matches) && (preferred || Array.from(container.querySelectorAll(Fields)).find(isShown));
         (field || container).focus();
+        if (field && field.matches("input") && TypingTypes.has(field.type) && field.value) field.select();
+    }
+
+    function firstShown(container, selector, skip) {
+        if (container.matches(selector) && !container.matches(skip)) return container;
+        return Array.from(container.querySelectorAll(selector)).find(function (element) { return isShown(element) && !element.matches(skip); });
     }
 
     function focusNear(element, fallback) {
-        const neighbor = [element.nextElementSibling, element.previousElementSibling].find(function (sibling) { return sibling && isShown(sibling); });
-        const target = neighbor && (neighbor.matches(Focusable) ? neighbor : neighbor.querySelector(Focusable));
+        const neighbor = [element.nextElementSibling, element.previousElementSibling].find(function (sibling) { return sibling && isShown(sibling) && !sibling.matches(".is-leaving"); });
+        const target = neighbor && (firstShown(neighbor, Fields, "[readonly], :disabled") || firstShown(neighbor, Focusable, ".btn--destructive, .menu-item--destructive"));
         if (target) target.focus();
         else if (fallback) fallback.focus();
     }
@@ -106,6 +122,7 @@
         const dialog = event.target;
         if (!dialog.matches("dialog.dialog")) return;
         if (event.newState === "open") {
+            statusIn(dialog);
             focusFirst(dialog);
             return;
         }
@@ -219,7 +236,9 @@
 
     function fillSheet(content, direction, fresh) {
         const from = sheet.open ? sheet.offsetHeight : 0;
+        const region = sheet.querySelector(":scope > [data-announcer]");
         sheet.replaceChildren(content);
+        if (region) sheet.append(region);
         sheet.setAttribute("aria-label", readTitle(sheet) || "Sheet");
         if (sheet.levels.length) addBackLinks(sheet.levels[sheet.levels.length - 1].title);
         if (fresh) {
@@ -243,7 +262,7 @@
         const pushing = dialog.open && opener && dialog.contains(opener);
         if (pushing) {
             const nodes = document.createDocumentFragment();
-            nodes.append(...dialog.childNodes);
+            nodes.append(...Array.from(dialog.childNodes).filter(function (node) { return !(node.matches && node.matches("[data-announcer]")); }));
             dialog.levels.push({ nodes: nodes, opener: opener, title: readTitle(nodes) });
         } else if (!dialog.open) {
             dialog.levels = [];
@@ -1047,7 +1066,8 @@
     }
 
     function shortcutControls() {
-        return Array.from(document.querySelectorAll("[aria-keyshortcuts]")).filter(function (control) { return isShown(control) && !control.matches(":disabled, [aria-disabled=true]"); });
+        const controls = Array.from(document.querySelectorAll("[aria-keyshortcuts]")).filter(function (control) { return isShown(control) && !control.matches(":disabled, [aria-disabled=true]"); });
+        return controls.filter(function (control) { return control.closest("main"); }).concat(controls.filter(function (control) { return !control.closest("main"); }));
     }
 
     function describeShortcut(shortcut) {
@@ -1063,8 +1083,14 @@
     }
 
     function showShortcuts() {
+        const claimed = new Set();
         const rows = shortcutControls().map(function (control) {
-            const shortcuts = parseShortcuts(control).filter(function (shortcut) { return apple ? !shortcut.control || shortcut.meta : !shortcut.meta; });
+            const shortcuts = parseShortcuts(control).filter(function (shortcut) {
+                const key = describeShortcut(shortcut).join("+");
+                if ((apple ? shortcut.control && !shortcut.meta : shortcut.meta) || claimed.has(key)) return false;
+                claimed.add(key);
+                return true;
+            });
             return [labelOf(control), shortcuts];
         }).filter(function (row) { return row[1].length; });
         rows.push(["Keyboard Shortcuts", [{ key: "?" }]], ["Close", [{ key: "Esc" }]]);
@@ -1115,7 +1141,8 @@
     function nameFor(transition, element, name) {
         if (!element) return;
         element.style.viewTransitionName = name;
-        transition.finished.finally(function () { element.style.viewTransitionName = ""; });
+        function clear() { element.style.viewTransitionName = ""; }
+        transition.finished.then(clear, clear);
     }
 
     function findLink(url) {
@@ -1155,7 +1182,7 @@
     });
 
     function start() {
-        if (!status) announce("");
+        statusIn(document.body);
         const existing = document.querySelector(".toast--floating");
         if (existing) {
             bindToast(existing);
