@@ -1,30 +1,12 @@
 (function () {
     const iconsURL = new URL("icons.svg", document.currentScript.src).pathname;
 
-    const MillisecondsPerMinute = 60000;
-
     function readToken(name) {
         return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
     }
 
-    function readNoticeDuration(message) {
-        const words = message.trim().split(/\s+/).length;
-        return Math.max(readToken("--duration-notice"), words / readToken("--reading-words-per-minute") * MillisecondsPerMinute);
-    }
-
-    function buildIcon(name) {
-        return '<svg class="icon" aria-hidden="true"><use href="' + iconsURL + "#" + name + '"/></svg>';
-    }
-
-    function showToast(message) {
-        const toast = document.createElement("div");
-        toast.className = "toast toast--floating";
-        toast.setAttribute("role", "status");
-        toast.textContent = message;
-        document.body.append(toast);
-        let timer = setTimeout(function () { toast.remove(); }, readNoticeDuration(message));
-        toast.addEventListener("pointerenter", function () { clearTimeout(timer); });
-        toast.addEventListener("pointerleave", function () { timer = setTimeout(function () { toast.remove(); }, readNoticeDuration(message)); });
+    function buildIcon(name, extra) {
+        return '<svg class="icon' + (extra ? " " + extra : "") + '" aria-hidden="true"><use href="' + iconsURL + "#" + name + '"/></svg>';
     }
 
     function addHeadingAnchors() {
@@ -33,18 +15,15 @@
             anchor.className = "prose__anchor";
             anchor.href = "#" + heading.id;
             anchor.setAttribute("aria-label", "Copy link to " + heading.textContent.trim());
-            anchor.innerHTML = buildIcon("link");
-            anchor.addEventListener("click", function (event) {
-                event.preventDefault();
-                history.replaceState(null, "", anchor.hash);
-                navigator.clipboard.writeText(location.href).then(function () { showToast("Link Copied"); });
-            });
+            anchor.dataset.copyLink = "";
+            anchor.innerHTML = buildIcon("link") + buildIcon("check", "btn__swap");
+            anchor.addEventListener("click", function () { history.replaceState(history.state, "", anchor.hash); });
             heading.prepend(anchor);
         });
     }
 
     function addCodeCopy() {
-        document.querySelectorAll(".doc .prose pre").forEach(function (pre) {
+        document.querySelectorAll(".doc .prose pre").forEach(function (pre, index) {
             if (pre.parentElement.classList.contains("code-block")) return;
             const block = document.createElement("div");
             block.className = "code-block";
@@ -52,14 +31,9 @@
             button.type = "button";
             button.className = "btn btn--icon btn--sm code-block__copy";
             button.setAttribute("aria-label", "Copy code");
-            button.innerHTML = buildIcon("duplicate");
-            button.addEventListener("click", function () {
-                navigator.clipboard.writeText(pre.textContent).then(function () {
-                    button.innerHTML = buildIcon("check");
-                    showToast("Code Copied");
-                    setTimeout(function () { button.innerHTML = buildIcon("duplicate"); }, readToken("--duration-notice"));
-                });
-            });
+            pre.id ||= "code-" + (index + 1);
+            button.dataset.copy = pre.id;
+            button.innerHTML = buildIcon("duplicate") + buildIcon("check", "btn__swap");
             pre.replaceWith(block);
             block.append(pre, button);
         });
@@ -81,18 +55,46 @@
         const list = contents.querySelector(".contents__list");
         const links = Array.from(list.querySelectorAll("a"));
         const headings = links.map(function (link) { return document.getElementById(decodeURIComponent(link.hash.slice(1))); });
-        function setOpen(open) {
-            contents.classList.toggle("is-open", open);
-            toggle.setAttribute("aria-expanded", String(open));
-        }
-        toggle.addEventListener("click", function () { setOpen(!contents.classList.contains("is-open")); });
-        links.forEach(function (link) { link.addEventListener("click", function () { setOpen(false); }); });
-        document.addEventListener("click", function (event) { if (!contents.contains(event.target)) setOpen(false); });
-        document.addEventListener("keydown", function (event) {
-            if (event.key !== "Escape" || !contents.classList.contains("is-open")) return;
-            setOpen(false);
-            toggle.focus();
+        const wide = matchMedia("(min-width: 1024px)");
+        let byKeyboard = false;
+        list.id ||= "contents-list";
+        list.popover = "auto";
+        toggle.removeAttribute("aria-expanded");
+        toggle.popoverTargetElement = list;
+        function shownLinks() { return links.filter(function (link) { return link.checkVisibility(); }); }
+        toggle.addEventListener("pointerdown", function () { byKeyboard = false; });
+        toggle.addEventListener("keydown", function (event) {
+            byKeyboard = true;
+            if (event.key !== "ArrowDown" || list.matches(":popover-open")) return;
+            event.preventDefault();
+            list.showPopover();
         });
+        list.addEventListener("toggle", function (event) {
+            if (event.newState !== "open") return;
+            const here = list.querySelector("[aria-current]") || shownLinks()[0];
+            if (!here) return;
+            here.scrollIntoView({ block: "nearest" });
+            if (byKeyboard) here.focus();
+        });
+        list.addEventListener("keydown", function (event) {
+            if (!list.matches(":popover-open")) return;
+            const shown = shownLinks();
+            const at = shown.indexOf(document.activeElement);
+            const next = { ArrowDown: shown[Math.min(at + 1, shown.length - 1)], ArrowUp: shown[Math.max(at - 1, 0)], Home: shown[0], End: shown.at(-1) }[event.key];
+            if (!next) return;
+            event.preventDefault();
+            next.focus();
+        });
+        links.forEach(function (link) {
+            link.addEventListener("click", function () {
+                if (list.matches(":popover-open")) list.hidePopover();
+                const heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+                if (!heading) return;
+                heading.tabIndex = -1;
+                requestAnimationFrame(function () { heading.focus({ preventScroll: true }); });
+            });
+        });
+        wide.addEventListener("change", function () { if (wide.matches && list.matches(":popover-open")) list.hidePopover(); });
         function keepInView(link) {
             const scroller = getComputedStyle(list).overflowY === "auto" ? list : contents;
             const box = scroller.getBoundingClientRect();
@@ -182,6 +184,7 @@
             });
             if (noResults) noResults.hidden = shown > 0;
             if (noResultsText) noResultsText.textContent = "Nothing mentions “" + query + "”. Try fewer words.";
+            design.announce(shown ? (terms.length ? shown + " of " : "") + items.length + " questions" : "No results for “" + query + "”");
             document.dispatchEvent(new Event("doc:filter"));
         });
     }
