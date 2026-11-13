@@ -1077,8 +1077,7 @@
     }
 
     function labelOf(control) {
-        const own = Array.from(control.childNodes).filter(function (node) { return !(node.matches && node.matches(".kbd")); }).map(function (node) { return node.textContent; }).join("");
-        const text = control.getAttribute("aria-label") || control.labels && control.labels[0] && control.labels[0].textContent || control.placeholder || own;
+        const text = control.getAttribute("aria-label") || control.labels && control.labels[0] && control.labels[0].textContent || control.placeholder || control.textContent;
         return text.trim().replace(/\s+/g, " ");
     }
 
