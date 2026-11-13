@@ -323,7 +323,7 @@
 
     document.addEventListener("pointerdown", function (event) {
         const bar = event.target.closest(".dialog--sheet[open] > .navbar");
-        if (!bar || event.pointerType !== "touch" || !phone.matches || event.target.closest("a, button, input, select, textarea")) return;
+        if (!bar || event.button !== 0 || !phone.matches || event.target.closest("a, button, input, select, textarea")) return;
         const dialog = bar.parentElement;
         const start = event.clientY;
         const began = event.timeStamp;
