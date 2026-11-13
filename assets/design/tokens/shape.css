@@ -7,8 +7,7 @@
   --radius-pill:980px;
 
   --size-control-sm:1.75rem;
-  --size-control:2.25rem;
-  --size-control-lg:2.75rem;
+  --size-control:2.75rem;
   --size-row:2.75rem;
   --size-bar:3.5rem;
   --size-bar-compact:2.75rem;
@@ -38,10 +37,4 @@
   --width-page:60rem;
   --width-page-wide:67.5rem;
   --width-content:80rem;
-}
-
-@media (pointer:coarse){
-  :root{
-    --size-control:2.75rem;
-  }
 }
