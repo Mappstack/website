@@ -278,16 +278,9 @@
 
     function showLoading(control) {
         if (!control) return function () {};
-        control.setAttribute("aria-busy", "true");
-        const chevron = control.querySelector(".cell__chevron") || control.closest(".cell") && control.closest(".cell").querySelector(".cell__chevron");
-        const spinner = document.createElement("span");
-        spinner.className = "spinner spinner--sm";
-        const timer = chevron && setTimeout(function () { chevron.replaceWith(spinner); }, readToken("--delay-loading"));
-        return function () {
-            clearTimeout(timer);
-            control.removeAttribute("aria-busy");
-            if (spinner.isConnected) spinner.replaceWith(chevron);
-        };
+        const target = control.matches(".btn, .cell") ? control : control.closest(".cell") || control;
+        target.setAttribute("aria-busy", "true");
+        return function () { target.removeAttribute("aria-busy"); };
     }
 
     async function openSheet(source, opener) {
@@ -1048,7 +1041,7 @@
     });
 
     addEventListener("pageshow", function () {
-        document.querySelectorAll('.btn[aria-busy="true"]').forEach(function (button) { button.removeAttribute("aria-busy"); });
+        document.querySelectorAll('.btn[aria-busy="true"], .cell[aria-busy="true"]').forEach(function (button) { button.removeAttribute("aria-busy"); });
     });
 
     function parseShortcuts(element) {
@@ -1193,7 +1186,113 @@
         }
         bindSearches(document);
         initTabs(document);
+        syncForms(document);
     }
+
+    const FormFields = "input:not([type=hidden], [type=submit], [type=button], [type=reset], [type=image]), select, textarea";
+    const gatedButtons = new WeakSet();
+    const changedFields = new WeakSet();
+    const markedFields = new WeakSet();
+    let errorCount = 0;
+    let focusingInvalid = false;
+
+    function listFields(form) {
+        return Array.from(form.elements).filter(function (field) { return field.matches(FormFields); });
+    }
+
+    function syncSubmit(form) {
+        const button = Array.from(form.elements).find(function (control) { return control.matches(".btn--primary") && control.type === "submit"; });
+        if (!button || form.method === "dialog" || form.noValidate || button.formNoValidate || button.getAttribute("aria-busy") === "true") return;
+        const valid = listFields(form).every(function (field) { return !field.willValidate || field.validity.valid; });
+        if (!valid) {
+            if (button.disabled && !gatedButtons.has(button)) return;
+            button.disabled = true;
+            gatedButtons.add(button);
+        } else if (gatedButtons.has(button)) {
+            button.disabled = false;
+            gatedButtons.delete(button);
+        }
+    }
+
+    function syncForms(scope) {
+        scope.querySelectorAll("form").forEach(syncSubmit);
+    }
+
+    function markInvalid(field) {
+        field.setAttribute("aria-invalid", "true");
+        markedFields.add(field);
+        const wrapper = field.closest(".field");
+        if (!wrapper) return false;
+        let message = wrapper.querySelector(".field__error");
+        if (!message) {
+            message = document.createElement("span");
+            message.className = "field__error";
+            wrapper.append(message);
+        }
+        if (!message.id) message.id = "field-error-" + (++errorCount);
+        if (!(field.getAttribute("aria-describedby") || "").split(" ").includes(message.id)) field.setAttribute("aria-describedby", ((field.getAttribute("aria-describedby") || "") + " " + message.id).trim());
+        if (message.textContent !== field.validationMessage) announce(field.validationMessage);
+        message.textContent = field.validationMessage;
+        message.hidden = false;
+        return true;
+    }
+
+    function clearInvalid(field) {
+        markedFields.delete(field);
+        field.removeAttribute("aria-invalid");
+        const wrapper = field.closest(".field");
+        const message = wrapper && wrapper.querySelector(".field__error");
+        if (!message) return;
+        message.textContent = "";
+        message.hidden = true;
+    }
+
+    function checkField(field) {
+        if (markedFields.has(field)) {
+            if (field.validity.valid) clearInvalid(field);
+            else markInvalid(field);
+        }
+    }
+
+    document.addEventListener("input", function (event) {
+        if (event.target.matches && event.target.matches(FormFields)) changedFields.add(event.target);
+        if (event.target.form) syncSubmit(event.target.form);
+        checkField(event.target);
+    });
+
+    document.addEventListener("change", function (event) {
+        if (event.target.matches && event.target.matches(FormFields)) changedFields.add(event.target);
+        if (event.target.form) syncSubmit(event.target.form);
+        checkField(event.target);
+    });
+
+    document.addEventListener("focusout", function (event) {
+        const field = event.target;
+        if (field.matches && field.matches(FormFields) && field.type !== "search" && field.closest(".field") && changedFields.has(field) && field.willValidate && !field.validity.valid && !(field.form && field.form.noValidate)) markInvalid(field);
+    });
+
+    document.addEventListener("invalid", function (event) {
+        if (!markInvalid(event.target)) return;
+        event.preventDefault();
+        if (focusingInvalid) return;
+        focusingInvalid = true;
+        event.target.focus();
+        setTimeout(function () { focusingInvalid = false; });
+    }, true);
+
+    document.addEventListener("keydown", function (event) {
+        const field = event.target;
+        if (event.key !== "Enter" || event.defaultPrevented || event.isComposing || !field.matches || !field.matches("input:not([type=checkbox], [type=radio], [type=button], [type=submit])") || !field.form || field.form.noValidate) return;
+        const invalid = listFields(field.form).filter(function (candidate) { return candidate.willValidate && !candidate.validity.valid; });
+        if (!invalid.length) return;
+        event.preventDefault();
+        const written = invalid.map(markInvalid);
+        if (written[0]) invalid[0].focus();
+        else invalid[0].reportValidity();
+    });
+
+    document.addEventListener("design:content", function (event) { syncForms(event.target); });
+    addEventListener("pageshow", function () { syncForms(document); });
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
     else start();
