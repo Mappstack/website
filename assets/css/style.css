@@ -8,7 +8,8 @@ h1,h2{text-wrap:balance}
 .figure__id{display:flex;align-items:baseline;gap:var(--space-8)}
 .figure__id strong{font-weight:var(--weight-semibold)}
 .legend{display:flex;flex-wrap:wrap;gap:var(--space-8);list-style:none;margin:0;padding:0}
-.legend__swatch--neutral{background:var(--color-diagram-neutral)}
+.legend__swatch{flex:none;width:var(--space-8);height:var(--space-8);border-radius:var(--radius-4)}
+.legend__swatch--neutral{background:var(--color-diagram-neutral);box-shadow:inset 0 0 0 var(--size-hairline) var(--color-border-strong)}
 .legend__swatch--purple{background:var(--color-diagram-purple)}
 .legend__swatch--blue{background:var(--color-diagram-blue)}
 .legend__swatch--teal{background:var(--color-diagram-teal)}
