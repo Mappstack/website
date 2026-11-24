@@ -6,7 +6,6 @@
   --color-on-primary:var(--base-white);
   --color-accent:var(--base-link);
   --color-accent-hover:var(--base-link-hover);
-  --color-on-accent:var(--base-white);
   --color-text:var(--base-ink);
   --color-text-secondary:var(--base-gray-750);
 
@@ -101,7 +100,6 @@
     --color-on-primary:var(--base-ink);
     --color-accent:var(--base-link-dark);
     --color-accent-hover:var(--base-blue-accessible-dark);
-    --color-on-accent:var(--base-ink);
     --color-text:var(--base-gray-100);
     --color-text-secondary:var(--base-gray-450);
 

@@ -25,7 +25,7 @@ var structureRules = []StructureRule{
 	{Match: ".dialog", Tag: "dialog", Holds: ".dialog__body or .outcome or .page or .navbar", Rule: "Dialog: dialog.dialog > .dialog__body"},
 	{Match: ".dialog--alert", Holds: ".outcome, .outcome__title, .outcome__message, .outcome__actions", Rule: "Dialog: confirmations are dialog.dialog.dialog--alert > .outcome with a title, a message and actions"},
 	{Match: ".outcome", Holds: ".outcome__title", Rule: "Outcome: .outcome > .outcome__glyph + __title + __message + __actions"},
-	{Match: ".empty", Holds: ".empty__title, .empty__desc", Lacks: ".btn--primary, .btn--accent", Rule: "Empty: a title and one sentence; the create action stays in the bar"},
+	{Match: ".empty", Holds: ".empty__title, .empty__desc", Lacks: ".btn--primary", Rule: "Empty: a title and one sentence; the create action stays in the bar"},
 	{Match: ".notice", Holds: ".notice__icon, .notice__body", Rule: "Notice: .notice > svg.icon.notice__icon + .notice__body"},
 	{Match: ".search", Holds: "input.input, .search__icon", Rule: "Search: .search > svg.icon.search__icon + input.input"},
 	{Match: ".select", Holds: "select.select__input, .select__caret", Rule: "Select: .select > select.select__input + svg.select__caret"},
@@ -118,7 +118,7 @@ var textualInputTypes = map[string]bool{"": true, "text": true, "email": true, "
 var tooltipTags = map[string]bool{"button": true, "a": true, "input": true, "select": true, "textarea": true, "summary": true}
 var invalidClasses = map[string]bool{"is-invalid": true, "invalid": true, "has-error": true, "is-error": true, "error": true, "input--error": true, "field--error": true}
 var formClasses = map[string]bool{"input": true, "field": true, "select": true, "checkbox": true, "radio": true, "switch": true}
-var paintVariants = []string{"btn--primary", "btn--accent", "btn--plain", "btn--destructive", "btn--destructive-filled"}
+var paintVariants = []string{"btn--primary", "btn--plain", "btn--destructive", "btn--destructive-filled"}
 var plainVerbPattern = regexp.MustCompile(`^(Edit|Share|Rename|Export)\b`)
 var genericLabels = map[string]bool{"Submit": true, "Go": true, "Proceed": true, "Click Here": true, "Here": true}
 var separatorPattern = regexp.MustCompile(`^[|/\\•*~–—-]+$|\s[|/•]\s`)
@@ -278,7 +278,7 @@ func FindElementProblems(markup *Markup, element *Element, design Design) []Find
 	if painted > 1 && !element.ConditionalClass && !(painted == 2 && element.Has("btn--plain") && element.Has("btn--destructive")) {
 		report("more than one paint variant on .btn: Button: one variant per button")
 	}
-	if element.Has("navbar__fold") && (element.Has("btn--primary") || element.Has("btn--accent")) {
+	if element.Has("navbar__fold") && element.Has("btn--primary") {
 		report("primary action folds into More: Bar actions: only plain actions fold into More on phones")
 	}
 	if markup.Tree && !element.Opaque && (element.Has("btn") || element.Name == "button") {
@@ -286,7 +286,7 @@ func FindElementProblems(markup *Markup, element *Element, design Design) []Find
 			if strings.Contains(label, markupDynamic) {
 				continue
 			}
-			if genericLabels[label] && (element.Has("btn--primary") || element.Has("btn--accent") || kind == "submit") {
+			if genericLabels[label] && (element.Has("btn--primary") || kind == "submit") {
 				report("primary action named %q: Forms: named for what it does (Send, Create, Done)", label)
 				break
 			}
