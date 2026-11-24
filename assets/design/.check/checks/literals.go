@@ -28,7 +28,7 @@ var closedProperties = map[string]bool{
 	"gap": true, "row-gap": true, "column-gap": true, "height": true, "min-height": true, "max-height": true, "width": true, "min-width": true, "max-width": true,
 	"top": true, "right": true, "bottom": true, "left": true, "inset": true,
 	"transition": true, "transition-duration": true, "transition-delay": true, "animation": true, "animation-delay": true, "animation-duration": true, "z-index": true, "opacity": true, "box-shadow": true,
-	"outline": true, "outline-offset": true, "stroke-width": true,
+	"outline": true, "outline-offset": true, "stroke-width": true, "translate": true,
 }
 
 var allowedLengths = map[string]bool{"1px": true, "-1px": true}
@@ -45,6 +45,9 @@ func CheckLiterals(root string, exclusions []string) ([]string, error) {
 			for _, finding := range FindLiterals(extension, line) {
 				problems = append(problems, fmt.Sprintf("%s:%d: %s", relative, index+1, finding))
 			}
+		}
+		for _, finding := range FindTimelineProblems(ReadStyleRules(text, extension)) {
+			problems = append(problems, fmt.Sprintf("%s:%d: %s", relative, finding.Line, finding.Text))
 		}
 		for _, line := range FindBareHovers(extension, text) {
 			problems = append(problems, fmt.Sprintf("%s:%d: :hover outside @media (hover:hover), so a tap leaves it on", relative, line))
@@ -88,6 +91,9 @@ func FindLiterals(extension, line string) []string {
 	case ".html", ".tmpl", ".js":
 		for _, attribute := range styleAttributePattern.FindAllStringSubmatch(line, -1) {
 			findings = append(findings, FindStyleLiterals(attribute[1])...)
+			if timelinePropertyPattern.MatchString(attribute[1]) {
+				findings = append(findings, "timeline in a style attribute: Scroll motion: an inline style cannot carry the media and supports guard")
+			}
 		}
 	}
 	return findings
@@ -115,6 +121,12 @@ func FindStyleLiterals(text string) []string {
 	var findings []string
 	for _, declaration := range styleDeclarationPattern.FindAllStringSubmatch(text, -1) {
 		property, value := declaration[1], strings.TrimSpace(declaration[2])
+		if property == "scale" {
+			for _, number := range FindBareNumbers(value, true) {
+				findings = append(findings, property+" "+number)
+			}
+			continue
+		}
 		if strings.HasPrefix(property, "--") || !closedProperties[property] {
 			continue
 		}

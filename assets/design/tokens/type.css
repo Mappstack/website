@@ -12,6 +12,7 @@
   --text-34:2.125rem;
   --text-40:2.5rem;
   --text-56:3.5rem;
+  --text-72:4.5rem;
   --text-inline-code:0.92em;
 
   --tracking-caps:0.06em;
@@ -22,6 +23,7 @@
   --tracking-34:-0.022em;
   --tracking-40:-0.025em;
   --tracking-56:-0.03em;
+  --tracking-72:-0.035em;
 
   --leading-tight:1.1;
   --leading-snug:1.25;

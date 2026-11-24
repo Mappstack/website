@@ -48,6 +48,7 @@ func FindPageProblems(text, extension string, designClasses map[string]bool) []F
 			}
 		}
 	}
+	findings = append(findings, FindMotionProblems(markup)...)
 	scripts := scriptSourcePattern.FindAllStringSubmatchIndex(text, -1)
 	behaviors, document := -1, -1
 	for _, script := range scripts {

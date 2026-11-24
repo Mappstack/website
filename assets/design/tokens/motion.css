@@ -10,6 +10,15 @@
   --ease-standard:ease;
   --ease-spring:cubic-bezier(0.2,0.9,0.3,1.1);
   --press-scale:0.98;
+  --delay-cascade:120ms;
+  --scale-enter:0.94;
+  --scale-depth:1.08;
+  --scale-recede:0.92;
+  --scale-glyph:0.6;
+  --scale-remove:0.5;
+  --scale-menu:0.96;
+  --scale-fold:0.8;
+  --drift-travel:4%;
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -19,5 +28,7 @@
     --duration-reveal:0ms;
     --press-scale:1;
     --delay-stagger:0ms;
+    --delay-cascade:0ms;
+    --scale-enter:1;
   }
 }

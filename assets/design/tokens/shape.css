@@ -6,6 +6,11 @@
   --radius-24:24px;
   --radius-pill:980px;
 
+  --ratio-wide:16 / 9;
+  --ratio-portrait:4 / 5;
+  --ratio-square:1 / 1;
+  --ratio-thumbnail:4 / 3;
+
   --size-control-sm:1.75rem;
   --size-control:2.75rem;
   --size-row:2.75rem;
@@ -21,6 +26,7 @@
   --size-rings-sm:3.5rem;
   --size-rings:12.5rem;
   --size-rings-lg:15rem;
+  --size-portrait:15rem;
   --size-sidebar:15rem;
   --size-hairline:1px;
   --size-ring:3px;

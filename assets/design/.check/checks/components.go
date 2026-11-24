@@ -82,6 +82,16 @@ var structureRules = []StructureRule{
 	{Match: ".hint", Tag: "p", Rule: "List: p.hint"},
 	{Match: ".doc__item", Holds: "h3[id]", Rule: "Long-form: every question linkable"},
 	{Match: ".menu--navbar", Attributes: "popover", Rule: "Navbar: .menu.menu--navbar[popover]"},
+	{Match: ".display--grand", Tag: "h1", Rule: "Page: display--grand is the opener's h1"},
+	{Match: ".opener", Holds: ".opener__body, h1", Rule: "Opener: .opener > .opener__body > h1 + lede + actions, then a .media"},
+	{Match: ".media", Tag: "figure", Holds: ".media__image", Rule: "Media: figure.media > .media__image"},
+	{Match: ".media__image", Tag: "img|video", Rule: "Media: .media__image is an img or a video"},
+	{Match: ".band", Tag: "section", Rule: "Band: section.band"},
+	{Match: ".manifesto", Holds: "h2.manifesto__text", Rule: "Manifesto: .manifesto > h2.manifesto__text"},
+	{Match: ".manifesto__text", Tag: "h2", Rule: "Manifesto: h2.manifesto__text"},
+	{Match: ".tiles", Tag: "ul", Rule: "Tiles: ul.tiles > li.tile"},
+	{Match: ".tile", Tag: "li", Holds: ".tile__title, .media or .tile__figure", Rule: "Tiles: li.tile leads with a .media or a .tile__figure, then a .tile__title"},
+	{Match: ".invite", Holds: ".invite__title, .invite__actions", Rule: "Invite: .invite > .invite__title + .invite__actions"},
 }
 
 type compiledRule struct {
@@ -160,6 +170,7 @@ func FindComponentProblems(markup *Markup, design Design) []Finding {
 			}
 		}
 		findings = append(findings, FindElementProblems(markup, element, design)...)
+		findings = append(findings, FindMediaProblems(element)...)
 	}
 	return findings
 }

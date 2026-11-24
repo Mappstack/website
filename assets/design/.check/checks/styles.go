@@ -15,11 +15,11 @@ var tokenDefinitionPattern = regexp.MustCompile(`setProperty\(\s*["'](--[\w-]+)`
 var parenthesesPattern = regexp.MustCompile(`\([^)]*\)`)
 var combinatorPattern = regexp.MustCompile(`[\s>+~]+`)
 
-var tokenPrefixes = []string{"--color-", "--space-", "--text-", "--radius-", "--size-", "--width-", "--shadow-", "--z-", "--duration-", "--delay-", "--ease-", "--opacity-", "--font-", "--weight-", "--leading-", "--tracking-", "--page-", "--card-", "--frost", "--press-", "--reading-"}
+var tokenPrefixes = []string{"--color-", "--space-", "--text-", "--radius-", "--size-", "--width-", "--shadow-", "--z-", "--duration-", "--delay-", "--ease-", "--opacity-", "--font-", "--weight-", "--leading-", "--tracking-", "--page-", "--card-", "--frost", "--press-", "--reading-", "--scale-", "--ratio-", "--drift-"}
 var colorProperties = map[string]bool{"color": true, "background-color": true, "border-color": true, "outline-color": true, "fill": true, "stroke": true, "caret-color": true, "accent-color": true, "text-decoration-color": true, "border-top-color": true, "border-right-color": true, "border-bottom-color": true, "border-left-color": true}
 var lengthProperties = map[string]bool{"font-size": true, "margin": true, "margin-top": true, "margin-right": true, "margin-bottom": true, "margin-left": true, "padding": true, "padding-top": true, "padding-right": true, "padding-bottom": true, "padding-left": true, "gap": true, "row-gap": true, "column-gap": true, "width": true, "height": true, "min-width": true, "min-height": true, "max-width": true, "max-height": true, "border-radius": true, "letter-spacing": true, "z-index": true, "opacity": true}
 var profileColors = map[string]bool{"--page-background": true, "--card-border-color": true}
-var layoutProperties = map[string]bool{"width": true, "min-width": true, "max-width": true, "height": true, "min-height": true, "max-height": true, "display": true, "position": true, "order": true, "top": true, "right": true, "bottom": true, "left": true, "gap": true, "row-gap": true, "column-gap": true, "text-align": true}
+var layoutProperties = map[string]bool{"width": true, "min-width": true, "max-width": true, "height": true, "min-height": true, "max-height": true, "display": true, "position": true, "order": true, "top": true, "right": true, "bottom": true, "left": true, "gap": true, "row-gap": true, "column-gap": true, "text-align": true, "aspect-ratio": true}
 var layoutPrefixes = []string{"margin", "flex", "grid", "align-", "justify-", "place-", "inset"}
 var outlineNonePattern = regexp.MustCompile(`^(none|0|0px|0 none)\b`)
 var baseReferencePattern = regexp.MustCompile(`--base-[\w-]+`)
