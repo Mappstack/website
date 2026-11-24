@@ -21,8 +21,6 @@ var bareNumberPattern = regexp.MustCompile(`-?\d*\.?\d+`)
 // The system's own named timeline: the bar's title, which has its own reduced motion fallback.
 var systemTimelines = map[string]bool{"--page-title": true}
 
-const maxRiseChildren = 6
-
 func FindMotionProblems(markup *Markup) []Finding {
 	var findings []Finding
 	report := func(element *Element, format string, arguments ...any) {
@@ -93,9 +91,6 @@ func FindMotionProblems(markup *Markup) []Finding {
 		}
 		if used == "settle" && !element.Has("media") {
 			report(element, ".settle on a block that is not .media: Scroll motion: only a .media settles")
-		}
-		if used == "rise-group" && len(element.Children) > maxRiseChildren {
-			report(element, ".rise-group holds %d children: Scroll motion: the cascade stops at %d", len(element.Children), maxRiseChildren)
 		}
 	}
 	return findings

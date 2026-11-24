@@ -23,6 +23,13 @@
   --base-blue-dark:#0091ff;
   --base-blue-accessible:#1e6ef4;
   --base-blue-accessible-dark:#5cb8ff;
+  --base-link:#0066cc;
+  --base-link-hover:#0058b0;
+  --base-link-dark:#2997ff;
+  --base-link-more:#0053a6;
+  --base-link-more-hover:#00428a;
+  --base-link-more-dark:#6cb8ff;
+  --base-link-more-dark-hover:#9bd0ff;
   --base-indigo:#6155f5;
   --base-indigo-dark:#6d7cff;
   --base-indigo-accessible:#564ade;

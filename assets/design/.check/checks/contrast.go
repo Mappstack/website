@@ -168,6 +168,12 @@ func ListContrastPairs() []ContrastPair {
 	} {
 		addPair("--color-text-secondary", 4.5, all, layers...)
 	}
+	for _, surface := range plainSurfaces {
+		addPair("--color-accent", 4.5, all, surface)
+	}
+	for _, fill := range []string{"--color-accent", "--color-accent-hover"} {
+		addPair("--color-on-accent", 4.5, all, fill)
+	}
 	for _, fill := range []string{"--color-primary", "--color-primary-hover"} {
 		addPair("--color-on-primary", 4.5, all, fill)
 	}

@@ -4,6 +4,9 @@
   --color-primary:var(--base-ink);
   --color-primary-hover:var(--base-black);
   --color-on-primary:var(--base-white);
+  --color-accent:var(--base-link);
+  --color-accent-hover:var(--base-link-hover);
+  --color-on-accent:var(--base-white);
   --color-text:var(--base-ink);
   --color-text-secondary:var(--base-gray-750);
 
@@ -96,6 +99,9 @@
     --color-primary:var(--base-gray-100);
     --color-primary-hover:var(--base-white);
     --color-on-primary:var(--base-ink);
+    --color-accent:var(--base-link-dark);
+    --color-accent-hover:var(--base-blue-accessible-dark);
+    --color-on-accent:var(--base-ink);
     --color-text:var(--base-gray-100);
     --color-text-secondary:var(--base-gray-450);
 
@@ -166,6 +172,8 @@
     --color-hairline:var(--color-border-strong);
     --color-fill:var(--color-fill-strong);
     --color-text-secondary:var(--base-gray-800);
+    --color-accent:var(--base-link-more);
+    --color-accent-hover:var(--base-link-more-hover);
     --color-error:var(--base-red-accessible);
     --color-warn:var(--base-orange-accessible);
     --color-success:var(--base-green-accessible);
@@ -199,6 +207,8 @@
 @media (prefers-contrast:more) and (prefers-color-scheme:dark){
   :root{
     --color-text-secondary:var(--base-gray-350);
+    --color-accent:var(--base-link-more-dark);
+    --color-accent-hover:var(--base-link-more-dark-hover);
     --color-error:var(--base-red-accessible-dark);
     --color-on-error:var(--base-ink);
     --color-warn:var(--base-orange-accessible-dark);

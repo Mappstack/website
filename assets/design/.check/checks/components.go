@@ -25,7 +25,7 @@ var structureRules = []StructureRule{
 	{Match: ".dialog", Tag: "dialog", Holds: ".dialog__body or .outcome or .page or .navbar", Rule: "Dialog: dialog.dialog > .dialog__body"},
 	{Match: ".dialog--alert", Holds: ".outcome, .outcome__title, .outcome__message, .outcome__actions", Rule: "Dialog: confirmations are dialog.dialog.dialog--alert > .outcome with a title, a message and actions"},
 	{Match: ".outcome", Holds: ".outcome__title", Rule: "Outcome: .outcome > .outcome__glyph + __title + __message + __actions"},
-	{Match: ".empty", Holds: ".empty__title, .empty__desc", Lacks: ".btn--primary", Rule: "Empty: a title and one sentence; the create action stays in the bar"},
+	{Match: ".empty", Holds: ".empty__title, .empty__desc", Lacks: ".btn--primary, .btn--accent", Rule: "Empty: a title and one sentence; the create action stays in the bar"},
 	{Match: ".notice", Holds: ".notice__icon, .notice__body", Rule: "Notice: .notice > svg.icon.notice__icon + .notice__body"},
 	{Match: ".search", Holds: "input.input, .search__icon", Rule: "Search: .search > svg.icon.search__icon + input.input"},
 	{Match: ".select", Holds: "select.select__input, .select__caret", Rule: "Select: .select > select.select__input + svg.select__caret"},
@@ -90,7 +90,14 @@ var structureRules = []StructureRule{
 	{Match: ".manifesto", Holds: "h2.manifesto__text", Rule: "Manifesto: .manifesto > h2.manifesto__text"},
 	{Match: ".manifesto__text", Tag: "h2", Rule: "Manifesto: h2.manifesto__text"},
 	{Match: ".tiles", Tag: "ul", Rule: "Tiles: ul.tiles > li.tile"},
-	{Match: ".tile", Tag: "li", Holds: ".tile__title, .media or .tile__figure", Rule: "Tiles: li.tile leads with a .media or a .tile__figure, then a .tile__title"},
+	{Match: ".tile", Tag: "li", Holds: ".tile__title, .media or .tile__figure or .tile__icon", Rule: "Tiles: li.tile leads with a .media, a .tile__figure or a .tile__icon, then a .tile__title"},
+	{Match: ".tile__icon", Tag: "svg", Classes: "icon icon--lg", Rule: "Tiles: svg.icon.icon--lg.tile__icon"},
+	{Match: ".band", Holds: "h2", Rule: "Band: every band is titled by an h2, its .band__title, .manifesto__text or .invite__title"},
+	{Match: ".band__head", Holds: "h2.band__title", Rule: "Band: .band__head > h2.band__title + an optional .band__lede"},
+	{Match: ".band__title", Tag: "h2", Rule: "Band: h2.band__title"},
+	{Match: ".split", Holds: ".media, .split__body", Rule: "Split: .split > .media + .split__body"},
+	{Match: ".strip", Tag: "ul", Attributes: "tabindex=0, aria-label", Rule: "Strip: ul.strip[tabindex=0][aria-label] > li.strip__item > .media"},
+	{Match: ".strip__item", Tag: "li", Holds: ".media", Rule: "Strip: li.strip__item > .media"},
 	{Match: ".invite", Holds: ".invite__title, .invite__actions", Rule: "Invite: .invite > .invite__title + .invite__actions"},
 }
 
@@ -111,7 +118,7 @@ var textualInputTypes = map[string]bool{"": true, "text": true, "email": true, "
 var tooltipTags = map[string]bool{"button": true, "a": true, "input": true, "select": true, "textarea": true, "summary": true}
 var invalidClasses = map[string]bool{"is-invalid": true, "invalid": true, "has-error": true, "is-error": true, "error": true, "input--error": true, "field--error": true}
 var formClasses = map[string]bool{"input": true, "field": true, "select": true, "checkbox": true, "radio": true, "switch": true}
-var paintVariants = []string{"btn--primary", "btn--plain", "btn--destructive", "btn--destructive-filled"}
+var paintVariants = []string{"btn--primary", "btn--accent", "btn--plain", "btn--destructive", "btn--destructive-filled"}
 var plainVerbPattern = regexp.MustCompile(`^(Edit|Share|Rename|Export)\b`)
 var genericLabels = map[string]bool{"Submit": true, "Go": true, "Proceed": true, "Click Here": true, "Here": true}
 var separatorPattern = regexp.MustCompile(`^[|/\\•*~–—-]+$|\s[|/•]\s`)
@@ -271,7 +278,7 @@ func FindElementProblems(markup *Markup, element *Element, design Design) []Find
 	if painted > 1 && !element.ConditionalClass && !(painted == 2 && element.Has("btn--plain") && element.Has("btn--destructive")) {
 		report("more than one paint variant on .btn: Button: one variant per button")
 	}
-	if element.Has("navbar__fold") && element.Has("btn--primary") {
+	if element.Has("navbar__fold") && (element.Has("btn--primary") || element.Has("btn--accent")) {
 		report("primary action folds into More: Bar actions: only plain actions fold into More on phones")
 	}
 	if markup.Tree && !element.Opaque && (element.Has("btn") || element.Name == "button") {
@@ -279,7 +286,7 @@ func FindElementProblems(markup *Markup, element *Element, design Design) []Find
 			if strings.Contains(label, markupDynamic) {
 				continue
 			}
-			if genericLabels[label] && (element.Has("btn--primary") || kind == "submit") {
+			if genericLabels[label] && (element.Has("btn--primary") || element.Has("btn--accent") || kind == "submit") {
 				report("primary action named %q: Forms: named for what it does (Send, Create, Done)", label)
 				break
 			}

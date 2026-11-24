@@ -95,8 +95,8 @@ func FindBodyProblems(markup *Markup, body *Element, behaviors int) []Finding {
 			}
 		}
 	}
-	if behaviors < 0 && !body.Opaque && len(body.Children) > 0 {
-		report(body.Line, "behaviors.js is not loaded: Behaviors: load it on every page")
+	if behaviors < 0 && !body.Opaque && len(body.Children) > 0 && NeedsBehaviors(body) {
+		report(body.Line, "behaviors.js is not loaded: Behaviors: a page with a dialog, menu, form, button, data attribute or popover loads it; a page of plain content and links needs no script")
 	}
 	if !body.Has("shell") && !body.Has("site") && !body.DynamicClass && len(ParseSelector("footer.footer").Find(body)) > 0 {
 		report(body.Line, "public page without .site on body: One canvas: public pages put .site on body so the footer sits at the bottom")
@@ -190,6 +190,28 @@ func UsesDesign(markup *Markup, designClasses map[string]bool) bool {
 	for _, element := range markup.Elements {
 		if HasDesignClass(element, designClasses) {
 			return true
+		}
+	}
+	return false
+}
+
+// NeedsBehaviors says whether anything on the page is driven by behaviors.js: a control
+// that is pressed or filled, a dialog, a popover, a tab, or an element that opts in with
+// a data attribute. A page of content and links is complete without the script.
+func NeedsBehaviors(body *Element) bool {
+	for _, element := range body.Descendants() {
+		switch element.Name {
+		case "dialog", "form", "input", "select", "textarea", "button", "details":
+			return true
+		}
+		if element.Has("menu") || element.Has("sidebar") || element.Has("contents") || element.Has("flow") || element.Has("rings") {
+			return true
+		}
+		for _, attribute := range element.Attributes {
+			name := strings.ToLower(attribute.Name)
+			if strings.HasPrefix(name, "data-") || strings.HasPrefix(name, "popover") || name == "role" && strings.EqualFold(attribute.Value, "tablist") || name == "aria-keyshortcuts" {
+				return true
+			}
 		}
 	}
 	return false

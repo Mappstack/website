@@ -128,10 +128,10 @@ func FindButtonProblems(relative, markup string) []string {
 			}
 			return false
 		}
-		if has("btn--primary") {
+		if has("btn--primary") || has("btn--accent") {
 			primaries[view]++
 			if primaries[view] > 1 {
-				problems = append(problems, fmt.Sprintf("%s:%d: second .btn--primary in one view: a view has one primary action", relative, line))
+				problems = append(problems, fmt.Sprintf("%s:%d: second .btn--primary or .btn--accent in one view: a view has one primary action", relative, line))
 			}
 		}
 		if has("btn--sm") {
