@@ -1,6 +1,6 @@
 # Design system
 
-One system, four profiles. app, website, stackure and ayuvu load the same tokens, icons and components. Each product's character is a short profile; nothing else differs.
+One system, four profiles. Every product in `products.json` loads the same tokens, icons and components. Each product's character is a short profile; nothing else differs.
 
 ## Use
 
@@ -25,6 +25,7 @@ One system, four profiles. app, website, stackure and ayuvu load the same tokens
 11. Every component lives here. A product opts in; a difference between products is a recorded profile choice. A product's own CSS styles only its own classes: it never names a design class, and a product class on a design element sets layout only (margin, flex, grid, width).
 12. Every rule a product's files can show is checked by script, on every product push as well as on sync: contrast, stray literals, theme colors, bare hovers, copy, closed class sets and BEM parts, component structure and order, page structure, product styles, profile choices, one primary button per view and small buttons. What needs a browser or judgement is reviewed by a person. Each finding names its file, line and rule.
 13. Hover styles sit in `@media (hover:hover)`, so a tap never leaves one on.
+14. The best to beat (owner, 24 November 2026): for now Apple, in craft and magical feel; colors Apple like at the very least. A product's approved standard wins where it sets another aim.
 
 ## Tokens
 
