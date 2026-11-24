@@ -43,12 +43,11 @@ func FindPageProblems(text, extension string, designClasses map[string]bool) []F
 				}
 			case "color-scheme":
 				if !strings.Contains(content, "light") || !strings.Contains(content, "dark") || strings.Contains(content, "only") {
-					report(element.Line, "color-scheme %s: Patterns 10: light and dark follow the system", content)
+					report(element.Line, "color-scheme %s: Patterns 9: light and dark follow the system", content)
 				}
 			}
 		}
 	}
-	findings = append(findings, FindMotionProblems(markup)...)
 	scripts := scriptSourcePattern.FindAllStringSubmatchIndex(text, -1)
 	behaviors, document := -1, -1
 	for _, script := range scripts {
@@ -97,9 +96,6 @@ func FindBodyProblems(markup *Markup, body *Element, behaviors int) []Finding {
 	}
 	if behaviors < 0 && !body.Opaque && len(body.Children) > 0 && NeedsBehaviors(body) {
 		report(body.Line, "behaviors.js is not loaded: Behaviors: a page with a dialog, menu, form, button, data attribute or popover loads it; a page of plain content and links needs no script")
-	}
-	if !body.Has("shell") && !body.Has("site") && !body.DynamicClass && len(ParseSelector("footer.footer").Find(body)) > 0 {
-		report(body.Line, "public page without .site on body: One canvas: public pages put .site on body so the footer sits at the bottom")
 	}
 	var accounts, backlinks []*Element
 	for _, element := range body.Descendants() {

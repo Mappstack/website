@@ -269,7 +269,7 @@ func FindRuleProblems(rule StyleRule, placed map[string]string, designClasses ma
 			report("scroll-behavior smooth outside prefers-reduced-motion: no-preference: Principles 10: reduced motion stops all movement")
 		}
 		if property == "color-scheme" && (!strings.Contains(value, "light") || !strings.Contains(value, "dark") || strings.Contains(value, "only")) {
-			report("color-scheme %s: Patterns 10: light and dark follow the system", value)
+			report("color-scheme %s: Patterns 9: light and dark follow the system", value)
 		}
 		if strings.HasPrefix(property, "--") {
 			for _, prefix := range tokenPrefixes {

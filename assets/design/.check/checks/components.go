@@ -82,23 +82,6 @@ var structureRules = []StructureRule{
 	{Match: ".hint", Tag: "p", Rule: "List: p.hint"},
 	{Match: ".doc__item", Holds: "h3[id]", Rule: "Long-form: every question linkable"},
 	{Match: ".menu--navbar", Attributes: "popover", Rule: "Navbar: .menu.menu--navbar[popover]"},
-	{Match: ".display--grand", Tag: "h1", Rule: "Page: display--grand is the opener's h1"},
-	{Match: ".opener", Holds: ".opener__body, h1", Rule: "Opener: .opener > .opener__body > h1 + lede + actions, then a .media"},
-	{Match: ".media", Tag: "figure", Holds: ".media__image", Rule: "Media: figure.media > .media__image"},
-	{Match: ".media__image", Tag: "img|video", Rule: "Media: .media__image is an img or a video"},
-	{Match: ".band", Tag: "section", Rule: "Band: section.band"},
-	{Match: ".manifesto", Holds: "h2.manifesto__text", Rule: "Manifesto: .manifesto > h2.manifesto__text"},
-	{Match: ".manifesto__text", Tag: "h2", Rule: "Manifesto: h2.manifesto__text"},
-	{Match: ".tiles", Tag: "ul", Rule: "Tiles: ul.tiles > li.tile"},
-	{Match: ".tile", Tag: "li", Holds: ".tile__title, .media or .tile__figure or .tile__icon", Rule: "Tiles: li.tile leads with a .media, a .tile__figure or a .tile__icon, then a .tile__title"},
-	{Match: ".tile__icon", Tag: "svg", Classes: "icon icon--lg", Rule: "Tiles: svg.icon.icon--lg.tile__icon"},
-	{Match: ".band", Holds: "h2", Rule: "Band: every band is titled by an h2, its .band__title, .manifesto__text or .invite__title"},
-	{Match: ".band__head", Holds: "h2.band__title", Rule: "Band: .band__head > h2.band__title + an optional .band__lede"},
-	{Match: ".band__title", Tag: "h2", Rule: "Band: h2.band__title"},
-	{Match: ".split", Holds: ".media, .split__body", Rule: "Split: .split > .media + .split__body"},
-	{Match: ".strip", Tag: "ul", Attributes: "tabindex=0, aria-label", Rule: "Strip: ul.strip[tabindex=0][aria-label] > li.strip__item > .media"},
-	{Match: ".strip__item", Tag: "li", Holds: ".media", Rule: "Strip: li.strip__item > .media"},
-	{Match: ".invite", Holds: ".invite__title, .invite__actions", Rule: "Invite: .invite > .invite__title + .invite__actions"},
 }
 
 type compiledRule struct {
@@ -177,7 +160,6 @@ func FindComponentProblems(markup *Markup, design Design) []Finding {
 			}
 		}
 		findings = append(findings, FindElementProblems(markup, element, design)...)
-		findings = append(findings, FindMediaProblems(element)...)
 	}
 	return findings
 }

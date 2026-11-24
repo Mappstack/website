@@ -92,7 +92,7 @@ func FindLiterals(extension, line string) []string {
 		for _, attribute := range styleAttributePattern.FindAllStringSubmatch(line, -1) {
 			findings = append(findings, FindStyleLiterals(attribute[1])...)
 			if timelinePropertyPattern.MatchString(attribute[1]) {
-				findings = append(findings, "timeline in a style attribute: Scroll motion: an inline style cannot carry the media and supports guard")
+				findings = append(findings, "timeline in a style attribute: Principles 9 and 10: an inline style cannot carry the media and supports guard")
 			}
 		}
 	}
