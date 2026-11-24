@@ -1,0 +1,351 @@
+#!/usr/bin/env python3
+import hashlib, html, json, os, re, shutil, subprocess, sys, tempfile
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = REPO
+DESIGN = 'assets/design'
+NOT_PAGES = {'404.html'}
+SKIP_DIRS = {'.git', 'assets', 'node_modules'}
+SYNC_ACTOR = 'designsyi[bot]'
+SITE_FILES = re.compile(r'(?:assets/icons/bimi\.svg|favicon\.ico|robots\.txt|sitemap\.xml|llms\.txt|[0-9a-f]{32}\.txt)')
+READABLE = ('.html', '.css', '.webmanifest', '.js')
+REFERENCE = re.compile(r'[\w./-]+\.\w+')
+
+HIDDEN = re.compile(r'(?is)<(script|style|pre|code)\b.*?</\1>|<!--.*?-->')
+LD_JSON = re.compile(r'(?is)<script[^>]*application/ld\+json[^>]*>(.*?)</script>')
+ATTR = re.compile(r'''\b(?:aria-label|placeholder|alt|title)=(?:"([^"]*)"|'([^']*)')''')
+META = re.compile(r'(?is)<meta\b[^>]*\b(?:name|property)=["\'](?:description|og:[a-z_:]+|twitter:[a-z_:]+)["\'][^>]*>')
+CONTENT = re.compile(r'''\bcontent=(?:"([^"]*)"|'([^']*)')''')
+JS_LABEL = re.compile(r'''["']([A-Z][^"'<>{}]*)["']''')
+TAG = re.compile(r'<[^>]*>')
+JSON_STRING = re.compile(r'"((?:[^"\\]|\\.)*)"')
+JSON_KEY_OR_VALUE = re.compile(r'"(?:@\w+|https?://[^"]*|\d[^"]*)"')
+EMOJI = re.compile('[\u203C\u2049\u20E3\u2139\u2194-\u2199\u21A9-\u21AA\u231A-\u231B\u2328\u2388\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA-\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2605\u2607-\u2612\u2614-\u2685\u2690-\u2705\u2708-\u2712\u2714\u2716\u271D\u2721\u2728\u2733-\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763-\u2767\u2795-\u2797\u27A1\u27B0\u27BF\u2934-\u2935\u2B05-\u2B07\u2B1B-\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299\uFE0F\U0001F000-\U0001F0FF\U0001F10D-\U0001F10F\U0001F12F\U0001F16C-\U0001F171\U0001F17E-\U0001F17F\U0001F18E\U0001F191-\U0001F19A\U0001F1AD-\U0001F1FF\U0001F201-\U0001F20F\U0001F21A\U0001F22F\U0001F232-\U0001F23A\U0001F23C-\U0001F23F\U0001F249-\U0001F53D\U0001F546-\U0001F64F\U0001F680-\U0001F6FF\U0001F774-\U0001F77F\U0001F7D5-\U0001F7FF\U0001F80C-\U0001F80F\U0001F848-\U0001F84F\U0001F85A-\U0001F85F\U0001F888-\U0001F88F\U0001F8AE-\U0001F8FF\U0001F90C-\U0001F93A\U0001F93C-\U0001F945\U0001F947-\U0001FAFF\U0001FC00-\U0001FFFD]')
+RULES = [
+    ('dash: use a period, comma or colon', re.compile('[‒-―⸺⸻﹘﹣－]|(?<!\\S)-{1,2}(?!\\S)')),
+    ('exclamation mark', re.compile('[!‼⁉❕❗！]')),
+    ('emoji', EMOJI),
+    ('word: use sign in or sign out', re.compile(r'(?i)\blog ?(in|out)\b')),
+    ('word: use choose', re.compile(r'(?i)\bpick\b|\bselect one\b')),
+    ('spelling: use US English', re.compile(r'(?i)\b(organis\w*|colour\w*|behaviour\w*|favourite\w*|cancell(ed|ing)|analys(e|ed|ing)|optimis\w*|authoris\w*|customis\w*|centre|catalogue|programme|travell\w*)\b')),
+    ('separator: use a spaced middle dot', re.compile(r'\w \| \w')),
+]
+TRAILER = re.compile(r'(?im)^(?!goal:|signal:)[a-z]+(?:-[a-z]+)+: \S|https?://|^generated (?:with|by) ')
+
+problems = []
+
+
+def say(path, message):
+    problems.append(f'{path}: {message}')
+
+
+def git(*args):
+    return subprocess.run(['git', '-C', REPO, *args], capture_output=True, text=True, check=True).stdout
+
+
+def read(path):
+    with open(os.path.join(ROOT, path), encoding='utf-8') as f:
+        return f.read()
+
+
+def first(groups):
+    return [a or b for a, b in groups]
+
+
+def seen_text(path, content):
+    if path.endswith('.html'):
+        texts = []
+        for block in LD_JSON.findall(content):
+            texts += [s for s in JSON_STRING.findall(block) if not JSON_KEY_OR_VALUE.fullmatch(f'"{s}"')]
+        for tag in META.findall(content):
+            texts += first(CONTENT.findall(tag))
+        visible = HIDDEN.sub(' ', content)
+        texts += first(ATTR.findall(visible))
+        texts += TAG.split(visible)
+        return texts
+    if path.endswith('.js'):
+        return JS_LABEL.findall(content)
+    texts = []
+    for line in content.splitlines():
+        line = re.sub(r'^\s*(?:[-*+]|\d+\.)\s+', '', line)
+        texts.append(re.sub(r'\(https?://[^)]*\)|https?://\S+', ' ', line))
+    return texts
+
+
+def check_text(path):
+    for text in seen_text(path, read(path)):
+        text = ' '.join(html.unescape(text).split())
+        for name, pattern in RULES:
+            if text and pattern.search(text):
+                say(path, f'{name} in "{text[:80]}"')
+
+
+def walk(predicate):
+    found = []
+    for directory, dirs, files in os.walk(ROOT):
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith('.')]
+        for name in files:
+            path = os.path.relpath(os.path.join(directory, name), ROOT)
+            if predicate(path):
+                found.append(path)
+    return sorted(found)
+
+
+def pages():
+    return walk(lambda p: p.endswith('.html') and p not in NOT_PAGES)
+
+
+def page_url(path):
+    path = path[:-len('index.html')] if path.endswith('index.html') else path[:-len('.html')]
+    return 'https://mappstack.com/' + path
+
+
+def check_page_lists():
+    sitemap = set(re.findall(r'<loc>([^<]*)</loc>', read('sitemap.xml')))
+    llms = set(re.findall(r'\]\((https://mappstack\.com/[^)]*)\)', read('llms.txt')))
+    urls = {page_url(p) for p in pages()}
+    for url in sorted(urls - sitemap):
+        say('sitemap.xml', f'missing {url}')
+    for url in sorted(sitemap - urls):
+        say('sitemap.xml', f'lists {url}, which has no page')
+    for url in sorted(urls - llms):
+        say('llms.txt', f'missing {url}')
+    for url in sorted(llms - urls):
+        say('llms.txt', f'lists {url}, which has no page')
+
+
+def page_change(status_lines):
+    for line in status_lines:
+        parts = line.split('\t')
+        if len(parts) < 2:
+            continue
+        status, paths = parts[0], parts[1:]
+        if status[0] in 'ADR' and any(p.endswith('.html') and p not in NOT_PAGES and not p.startswith(DESIGN) for p in paths):
+            return True
+    return False
+
+
+def check_change(label, status_lines):
+    changed = {p for line in status_lines for p in line.split('\t')[1:]}
+    if page_change(status_lines):
+        for needed in ('sitemap.xml', 'llms.txt'):
+            if needed not in changed:
+                say(label, f'adds, removes or renames a page without {needed} in the same commit')
+
+
+def check_message(label, message, exempt=False):
+    if TRAILER.search(message):
+        say(label, 'an attribution line, trailer or link: remove it')
+    if exempt:
+        return
+    if not re.search(r'(?m)^Goal: \S', message):
+        say(label, 'no line Goal: <the Goal or decision in company/strategy.md it serves>')
+    if not re.search(r'(?m)^Signal: \S', message):
+        say(label, 'no line Signal: <the demand behind it>')
+
+
+def check_commits(spec):
+    try:
+        commits = git('rev-list', '--no-merges', spec).split()
+    except subprocess.CalledProcessError as error:
+        say('CHECK_RANGE', f'cannot read {spec}: {error.stderr.strip()}')
+        return
+    for commit in commits:
+        label = f'commit {commit[:7]}'
+        check_change(label, git('show', '--format=', '--name-status', '-M', commit).splitlines())
+        check_message(label, git('show', '-s', '--format=%B', commit), os.environ.get('CHECK_ACTOR') == SYNC_ACTOR)
+
+
+def check_design():
+    base = os.path.join(ROOT, DESIGN)
+    listed = {}
+    for line in read(f'{DESIGN}/checksums.txt').splitlines():
+        digest, name = line.split('  ', 1)
+        listed[os.path.normpath(name)] = digest
+    present = set()
+    for directory, _, files in os.walk(base):
+        for name in files:
+            relative = os.path.normpath(os.path.relpath(os.path.join(directory, name), base))
+            if relative != 'checksums.txt':
+                present.add(relative)
+    for name in sorted(present - set(listed)):
+        say(f'{DESIGN}/{name}', 'not in checksums.txt: not delivered from ysashank/design')
+    for name in sorted(set(listed) - present):
+        say(f'{DESIGN}/{name}', 'in checksums.txt but missing')
+    for name in sorted(present & set(listed)):
+        with open(os.path.join(base, name), 'rb') as f:
+            if hashlib.sha256(f.read()).hexdigest() != listed[name]:
+                say(f'{DESIGN}/{name}', 'differs from what ysashank/design delivered')
+    run = subprocess.run(['sh', os.path.join(base, '.check', 'check.sh'), ROOT], capture_output=True, text=True)
+    if run.returncode:
+        for line in (run.stdout + run.stderr).splitlines():
+            say('design check', line.replace(ROOT + os.sep, ''))
+    design_dir = os.environ.get('DESIGN_DIR')
+    if design_dir:
+        compare_with_design(design_dir)
+
+
+def listing(path):
+    full = os.path.join(ROOT, path)
+    return os.listdir(full) if os.path.isdir(full) else []
+
+
+def design_show(design_dir, commit, source):
+    return subprocess.run(['git', '-C', design_dir, 'show', f'{commit}:{source}'], capture_output=True).stdout
+
+
+def design_names(design_dir, commit, folder):
+    listing = subprocess.run(['git', '-C', design_dir, 'ls-tree', '--name-only', commit, f'{folder}/'], capture_output=True, text=True, check=True).stdout
+    return [os.path.basename(line) for line in listing.splitlines()]
+
+
+def design_has(design_dir, commit):
+    return subprocess.run(['git', '-C', design_dir, 'cat-file', '-e', f'{commit}^{{commit}}'], capture_output=True).returncode == 0
+
+
+def design_theme_colors(design_dir, commit):
+    with tempfile.TemporaryDirectory() as tree:
+        archive = subprocess.run(['git', '-C', design_dir, 'archive', commit], capture_output=True, check=True).stdout
+        subprocess.run(['tar', '-x', '-C', tree], input=archive, check=True)
+        return subprocess.run(['go', 'run', './checks', 'background'], cwd=tree, capture_output=True, text=True).stdout
+
+
+def compare_with_design(design_dir):
+    commit = read(f'{DESIGN}/commit.txt').strip()
+    if not design_has(design_dir, commit):
+        say(f'{DESIGN}/commit.txt', f'{commit[:7]} is not in DESIGN_DIR')
+        return
+    products = json.loads(design_show(design_dir, commit, 'products.json'))
+    product = next(p for p in products if p['name'] == 'website')
+    profile = product.get('profile', product['name'])
+    sources = {'components.css': 'components.css', 'icons.svg': 'icons.svg', 'behaviors.js': 'behaviors.js',
+               'document.js': 'document.js', 'voice.md': 'voice.md', 'readme.md': 'skill/readme.md',
+               'profile.css': f'profiles/{profile}.css', '.check/theme.sh': 'scripts/theme.sh', '.check/check.sh': 'scripts/check.sh'}
+    for name in design_names(design_dir, commit, 'tokens'):
+        if name.endswith('.css'):
+            sources[f'tokens/{name}'] = f'tokens/{name}'
+    for name in design_names(design_dir, commit, 'checks'):
+        if name.endswith('.go') and not name.endswith('_test.go'):
+            sources[f'.check/checks/{name}'] = f'checks/{name}'
+    for folder in ('tokens', '.check/checks'):
+        for name in listing(os.path.join(DESIGN, folder)):
+            if f'{folder}/{name}' not in sources:
+                say(f'{DESIGN}/{folder}/{name}', f'not in ysashank/design {commit[:7]}')
+    for name, source in sorted(sources.items()):
+        path = os.path.join(ROOT, DESIGN, name)
+        if not os.path.exists(path):
+            say(f'{DESIGN}/{name}', f'missing, delivered by ysashank/design {commit[:7]}:{source}')
+        elif open(path, 'rb').read() != design_show(design_dir, commit, source):
+            say(f'{DESIGN}/{name}', f'differs from ysashank/design {commit[:7]}:{source}')
+    expected = {'.check/exclusions.txt': '\n'.join(product['exclusions']) + '\n',
+                '.check/profile.txt': profile + '\n',
+                '.check/theme-colors.txt': design_theme_colors(design_dir, commit),
+                '.check/.go-version': re.search(r'(?m)^go (.*)$', design_show(design_dir, commit, 'go.mod').decode()).group(1) + '\n'}
+    for name, text in expected.items():
+        if not os.path.exists(os.path.join(ROOT, DESIGN, name)):
+            say(f'{DESIGN}/{name}', f'missing, delivered by ysashank/design {commit[:7]}')
+        elif read(f'{DESIGN}/{name}') != text:
+            say(f'{DESIGN}/{name}', f'differs from ysashank/design {commit[:7]}')
+    bundle = ''
+    for line in design_show(design_dir, commit, 'styles.css').decode().splitlines():
+        match = re.fullmatch(r'@import "(.*)";', line)
+        if match:
+            file = f'profiles/{profile}.css' if match.group(1) == 'profile.css' else match.group(1)
+            bundle += design_show(design_dir, commit, file).decode() + '\n'
+    if not os.path.exists(os.path.join(ROOT, DESIGN, 'styles.css')):
+        say(f'{DESIGN}/styles.css', f'missing, delivered by ysashank/design {commit[:7]}:styles.css')
+    elif read(f'{DESIGN}/styles.css') != bundle:
+        say(f'{DESIGN}/styles.css', f'differs from ysashank/design {commit[:7]}:styles.css')
+
+
+def ignore_patterns():
+    patterns = []
+    for line in read('.dockerignore').splitlines():
+        line = line.strip()
+        if line and not line.startswith('#'):
+            negated = line.startswith('!')
+            body = os.path.normpath(line[1:] if negated else line).lstrip('/')
+            regex = ''.join('(?:.*/)?' if part == '**/' else '.*' if part == '**' else '[^/]*' if part == '*' else '[^/]' if part == '?' else re.escape(part)
+                            for part in re.findall(r'\*\*/|\*\*|\*|\?|[^*?]+', body))
+            patterns.append((re.compile(regex), negated))
+    return patterns
+
+
+def is_ignored(path, patterns):
+    parts = path.split('/')
+    ignored = False
+    for pattern, negated in patterns:
+        if any(pattern.fullmatch('/'.join(parts[:i])) for i in range(1, len(parts) + 1)):
+            ignored = not negated
+    return ignored
+
+
+def loaded_files(shipped):
+    loaded = set()
+    pending = [p for p in shipped if p.endswith(READABLE)]
+    while pending:
+        path = pending.pop()
+        for reference in REFERENCE.findall(read(path)):
+            reference = reference.lstrip('/').removeprefix('mappstack.com/')
+            for candidate in (os.path.normpath(os.path.join(os.path.dirname(path), reference)), reference):
+                if candidate in shipped and candidate not in loaded:
+                    loaded.add(candidate)
+                    if candidate.endswith(READABLE):
+                        pending.append(candidate)
+    return loaded
+
+
+def check_published():
+    tracked = {p for p in git('ls-files').splitlines() if os.path.exists(os.path.join(ROOT, p))}
+    patterns = ignore_patterns()
+    shipped = {p for p in tracked if not is_ignored(p, patterns)}
+    allowed = {p for p in shipped if p.endswith('.html') or SITE_FILES.fullmatch(p)} | loaded_files(shipped)
+    for path in sorted(shipped - allowed):
+        say(path, 'published but not a page, a root site file or a file a page loads: add it to .dockerignore')
+
+
+def text_files():
+    html_files = walk(lambda p: p.endswith('.html'))
+    js = sorted(os.path.relpath(os.path.join(d, f), ROOT) for d, _, fs in os.walk(os.path.join(ROOT, 'assets', 'js')) for f in fs if f.endswith('.js'))
+    return html_files + js + ['llms.txt']
+
+
+def check_tree():
+    for path in text_files():
+        check_text(path)
+    check_page_lists()
+    check_published()
+    check_design()
+
+
+def check_staged():
+    global ROOT
+    index = tempfile.mkdtemp()
+    try:
+        git('checkout-index', '--all', '--force', f'--prefix={index}/')
+        ROOT = index
+        check_tree()
+    finally:
+        ROOT = REPO
+        shutil.rmtree(index, ignore_errors=True)
+    check_change('staged change', git('diff', '--cached', '--name-status', '-M').splitlines())
+
+
+def main(args):
+    if args[:1] == ['--message']:
+        with open(args[1], encoding='utf-8') as f:
+            message = '\n'.join(l for l in f.read().splitlines() if not l.startswith('#'))
+        check_message('commit message', message)
+    elif args[:1] == ['--staged']:
+        check_staged()
+    else:
+        check_tree()
+        if os.environ.get('CHECK_RANGE'):
+            check_commits(os.environ['CHECK_RANGE'])
+    for line in problems:
+        print(line)
+    return 1 if problems else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

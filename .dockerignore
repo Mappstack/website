@@ -1,0 +1,13 @@
+.dockerignore
+.githooks
+.github
+.gitignore
+scripts
+assets/design/.check
+assets/design/checksums.txt
+assets/design/commit.txt
+assets/design/components.css
+assets/design/profile.css
+assets/design/readme.md
+assets/design/tokens
+assets/design/voice.md
