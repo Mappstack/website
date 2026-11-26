@@ -553,7 +553,7 @@ func FindTypeStepProblems(rules []StyleRule, model TypeModel) []Finding {
 		for _, declaration := range rule.Declarations {
 			property, value := declaration.Property, declaration.Value
 			report := func(format string, arguments ...any) {
-				findings = append(findings, Finding{declaration.Line, fmt.Sprintf(format, arguments...) + ": Principles 8: one size on every device, only display type (--text-40 and up) steps, once, at 900, to a smaller token"})
+				findings = append(findings, Finding{declaration.Line, fmt.Sprintf(format, arguments...) + ": Principles 8: one size on every device, only display type (--text-40 and up) steps, once, at 900, smaller below it"})
 			}
 			isSize := model.Size[property]
 			if isSize && viewportUnitPattern.MatchString(value) {

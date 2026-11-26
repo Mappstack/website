@@ -44,10 +44,10 @@ type drawnEntry struct {
 }
 
 type drawnStep struct {
-	context  string
-	opening  bool
-	from, to int
-	keys     []string
+	context          string
+	opening, reverse bool
+	from, to         int
+	keys             []string
 }
 
 type drawnSize struct {
@@ -475,7 +475,7 @@ func JudgeSubject(bases map[int]bool, queries map[string][]drawnSize, verdicts m
 			for _, first := range list {
 				for _, second := range other {
 					if first.size != second.size {
-						steps = append(steps, drawnStep{"900|" + key[strings.IndexByte(key, '|')+1:], true, first.size, second.size, []string{first.key, second.key}})
+						steps = append(steps, drawnStep{"900|" + key[strings.IndexByte(key, '|')+1:], true, first.size > second.size == strings.HasPrefix(key, "max899|"), first.size, second.size, []string{first.key, second.key}})
 					}
 				}
 			}
@@ -484,7 +484,7 @@ func JudgeSubject(bases map[int]bool, queries map[string][]drawnSize, verdicts m
 		for _, drawn := range list {
 			for from := range bases {
 				if from != drawn.size {
-					steps = append(steps, drawnStep{key, opening, from, drawn.size, []string{drawn.key}})
+					steps = append(steps, drawnStep{key, opening, from >= 0 && drawn.size > from == strings.HasPrefix(key, "max899|"), from, drawn.size, []string{drawn.key}})
 				}
 			}
 		}
@@ -512,6 +512,8 @@ func JudgeSubject(bases map[int]bool, queries map[string][]drawnSize, verdicts m
 				verdicts[key] = "steps display type more than once"
 			case !step.opening:
 				verdicts[key] = "steps display type at a width other than 900"
+			case step.reverse:
+				verdicts[key] = "draws display type bigger below 900"
 			}
 		}
 	}
@@ -524,14 +526,13 @@ func JudgeSteps(rules []StyleRule, pages []*Markup, model *TypeModel) {
 	}
 	parsed := map[int][]alternative{}
 	shown := map[[2]int]bool{}
-	reads := func(property string) bool { return NameSizeProperty(property) == "font-size" }
 	var sized []int
 	for index, rule := range rules {
 		if IsPrintRule(rule) || strings.HasPrefix(rule.Selector, "style ") {
 			continue
 		}
 		for _, declaration := range rule.Declarations {
-			if reads(declaration.Property) {
+			if model.Size[declaration.Property] {
 				sized = append(sized, index)
 				for _, text := range SplitTopLevel(rule.Selector) {
 					selector, ok := parseComplex(text)
@@ -556,7 +557,7 @@ func JudgeSteps(rules []StyleRule, pages []*Markup, model *TypeModel) {
 						plain   map[string][]drawnEntry
 						queries map[string][]drawnEntry
 					}
-					sources := map[string]*group{}
+					properties := map[string]map[string]*group{}
 					for _, index := range sized {
 						rule := rules[index]
 						specificity, matched := 0, false
@@ -573,15 +574,19 @@ func JudgeSteps(rules []StyleRule, pages []*Markup, model *TypeModel) {
 						if !matched {
 							continue
 						}
-						if sources[rule.Source] == nil {
-							sources[rule.Source] = &group{plain: map[string][]drawnEntry{}, queries: map[string][]drawnEntry{}}
-						}
-						present := sources[rule.Source]
 						key, _ := ReadQueryKey(rule)
 						for _, declaration := range rule.Declarations {
-							if !reads(declaration.Property) {
+							if !model.Size[declaration.Property] {
 								continue
 							}
+							name := NameSizeProperty(declaration.Property)
+							if properties[name] == nil {
+								properties[name] = map[string]*group{}
+							}
+							if properties[name][rule.Source] == nil {
+								properties[name][rule.Source] = &group{plain: map[string][]drawnEntry{}, queries: map[string][]drawnEntry{}}
+							}
+							present := properties[name][rule.Source]
 							size, bare := ReadBareSize(declaration.Property, declaration.Value)
 							if !bare {
 								size = -1
@@ -609,27 +614,29 @@ func JudgeSteps(rules []StyleRule, pages []*Markup, model *TypeModel) {
 						}
 						return best, found
 					}
-					bases := map[int]bool{}
-					queries := map[string][]drawnSize{}
-					for _, present := range sources {
-						if best, found := winner(present.ground); found {
-							bases[best.size] = true
-						}
-						for _, list := range present.plain {
-							if best, found := winner(present.ground, list); found {
+					for _, sources := range properties {
+						bases := map[int]bool{}
+						queries := map[string][]drawnSize{}
+						for _, present := range sources {
+							if best, found := winner(present.ground); found {
 								bases[best.size] = true
 							}
-						}
-					}
-					for _, present := range sources {
-						for key, list := range present.queries {
-							best, _ := winner(present.ground, list)
-							if best.size >= 0 && (best.query || ReadComplement(key) != "") {
-								queries[key] = append(queries[key], drawnSize{best.size, best.key})
+							for _, list := range present.plain {
+								if best, found := winner(present.ground, list); found {
+									bases[best.size] = true
+								}
 							}
 						}
+						for _, present := range sources {
+							for key, list := range present.queries {
+								best, _ := winner(present.ground, list)
+								if best.size >= 0 && (best.query || ReadComplement(key) != "") {
+									queries[key] = append(queries[key], drawnSize{best.size, best.key})
+								}
+							}
+						}
+						JudgeSubject(bases, queries, model.Verdict)
 					}
-					JudgeSubject(bases, queries, model.Verdict)
 				}
 			}
 			element.Classes, element.BranchClasses = classes, branches
@@ -647,7 +654,7 @@ func JudgeSteps(rules []StyleRule, pages []*Markup, model *TypeModel) {
 				continue
 			}
 			for position, text := range SplitTopLevel(rule.Selector) {
-				if reads(declaration.Property) && shown[[2]int{index, position}] {
+				if model.Size[declaration.Property] && shown[[2]int{index, position}] {
 					continue
 				}
 				subject := NormalizeSelector(text) + "|" + NameSizeProperty(declaration.Property)
