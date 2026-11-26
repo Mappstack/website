@@ -27,6 +27,8 @@ var markupBranchPattern = regexp.MustCompile(`\{\{-?\s*(if|with|range|block|defi
 var markupSvgPattern = regexp.MustCompile(`(?is)<svg\b.*?</svg>`)
 var markupNamePattern = regexp.MustCompile(`^[a-z][a-z0-9]*(?:(?:--|__|-)[a-z0-9]+)*$`)
 
+var classVariantsPattern = regexp.MustCompile(`(?is)\bclass(?:name)?\s*=\s*(?:"((?:\{\{.*?\}\}|[^"])*)"|'((?:\{\{.*?\}\}|[^'])*)')`)
+
 const markupDynamic = "\x00"
 
 type Finding struct {
@@ -40,22 +42,23 @@ type Attribute struct {
 }
 
 type Element struct {
-	Name             string
-	Attributes       []Attribute
-	Classes          []string
-	DynamicClass     bool
-	ConditionalClass bool
-	Offset           int
-	Line             int
-	ContentStart     int
-	ContentEnd       int
-	End              int
-	Parent           *Element
-	Children         []*Element
-	Conditional      bool
-	Partial          bool
-	Opaque           bool
-	Branches         map[int]int
+	Name          string
+	Attributes    []Attribute
+	Classes       []string
+	DynamicClass  bool
+	BranchClasses map[string]bool
+	ClassVariants [][]string
+	Offset        int
+	Line          int
+	ContentStart  int
+	ContentEnd    int
+	End           int
+	Parent        *Element
+	Children      []*Element
+	Conditional   bool
+	Partial       bool
+	Opaque        bool
+	Branches      map[int]int
 }
 
 type Markup struct {
@@ -349,7 +352,8 @@ func ParseMarkup(text, extension string) *Markup {
 			element.Attributes = ParseAttributes(text[nameEnd:end-1], extension)
 			for _, attribute := range element.Attributes {
 				if strings.EqualFold(attribute.Name, "class") || strings.EqualFold(attribute.Name, "classname") {
-					element.ConditionalClass = element.ConditionalClass || strings.Contains(text[index:end], "{{if") || strings.Contains(text[index:end], "{{ if") || strings.Contains(text[index:end], "{{else")
+					element.ClassVariants = ReadClassVariants(text[index:end])
+					element.BranchClasses = ReadBranchClasses(element.ClassVariants)
 					for _, token := range strings.Fields(attribute.Value) {
 						switch {
 						case strings.Contains(token, markupDynamic):
@@ -620,4 +624,74 @@ func HasDescendant(element *Element, specs string) bool {
 		}
 	}
 	return false
+}
+
+func ReadBranchClasses(variants [][]string) map[string]bool {
+	counts := map[string]int{}
+	for _, variant := range variants {
+		seen := map[string]bool{}
+		for _, token := range variant {
+			if !seen[token] {
+				seen[token] = true
+				counts[token]++
+			}
+		}
+	}
+	branch := map[string]bool{}
+	for token, count := range counts {
+		branch[token] = count < len(variants)
+	}
+	return branch
+}
+
+func ReadClassVariants(tag string) [][]string {
+	type chain struct {
+		arms, current [][]string
+		closed        bool
+	}
+	found := classVariantsPattern.FindStringSubmatch(tag)
+	if found == nil {
+		return nil
+	}
+	value := found[1] + found[2]
+	stack := []*chain{{current: [][]string{nil}}}
+	position, branched := 0, false
+	for _, at := range markupValuePattern.FindAllStringIndex(value, -1) {
+		top := stack[len(stack)-1]
+		for index := range top.current {
+			top.current[index] = append(append([]string(nil), top.current[index]...), strings.Fields(value[position:at[0]])...)
+		}
+		position = at[1]
+		action := markupActionPattern.FindStringSubmatch(value[at[0]:at[1]])
+		switch {
+		case action == nil || action[1] == "template":
+		case action[1] == "else":
+			top.arms, top.current = append(top.arms, top.current...), [][]string{nil}
+			top.closed = strings.Trim(value[at[0]+len(action[0]):at[1]], " -}") == ""
+		case action[1] == "end" && len(stack) > 1:
+			stack = stack[:len(stack)-1]
+			arms := append(top.arms, top.current...)
+			if !top.closed {
+				arms = append(arms, nil)
+			}
+			parent := stack[len(stack)-1]
+			var combined [][]string
+			for _, before := range parent.current {
+				for _, arm := range arms {
+					combined = append(combined, append(append([]string(nil), before...), arm...))
+				}
+			}
+			parent.current = combined
+		case action[1] != "end":
+			stack = append(stack, &chain{current: [][]string{nil}})
+			branched = true
+		}
+	}
+	if !branched || len(stack) > 1 {
+		return nil
+	}
+	for index := range stack[0].current {
+		stack[0].current[index] = append(stack[0].current[index], strings.Fields(value[position:])...)
+	}
+	return stack[0].current
 }

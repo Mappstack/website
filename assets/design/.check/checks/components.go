@@ -257,7 +257,7 @@ func FindElementProblems(markup *Markup, element *Element, design Design) []Find
 			painted++
 		}
 	}
-	if painted > 1 && !element.ConditionalClass && !(painted == 2 && element.Has("btn--plain") && element.Has("btn--destructive")) {
+	if painted > 1 && len(element.ClassVariants) == 0 && !(painted == 2 && element.Has("btn--plain") && element.Has("btn--destructive")) {
 		report("more than one paint variant on .btn: Button: one variant per button")
 	}
 	if element.Has("navbar__fold") && element.Has("btn--primary") {

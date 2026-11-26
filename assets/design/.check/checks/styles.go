@@ -42,6 +42,7 @@ type StyleDeclaration struct {
 	Property string
 	Value    string
 	Line     int
+	Offset   int
 }
 
 type StyleRule struct {
@@ -94,7 +95,7 @@ func ParseStyleRules(css string, firstLine int) []StyleRule {
 			if rule.Selector == "@font-face" && strings.ToLower(strings.TrimSpace(property)) != "size-adjust" {
 				return
 			}
-			rule.Declarations = append(rule.Declarations, StyleDeclaration{strings.ToLower(strings.TrimSpace(property)), strings.TrimSpace(value), line(offset)})
+			rule.Declarations = append(rule.Declarations, StyleDeclaration{strings.ToLower(strings.TrimSpace(property)), strings.TrimSpace(value), line(offset), offset})
 		}
 	}
 	for index := 0; index < len(css); index++ {
@@ -194,6 +195,7 @@ func CheckStyles(root, designDirectory string, exclusions []string) ([]string, e
 	extensions := map[string]bool{".css": true, ".html": true, ".tmpl": true, ".js": true, ".jsx": true, ".ts": true, ".tsx": true, ".go": true, ".py": true}
 	var sources []StyleSource
 	var links []StyleLink
+	var pages []*Markup
 	placed := map[string]string{}
 	var problems []string
 	err = WalkFiles(root, exclusions, extensions, func(relative, extension, text string) {
@@ -205,6 +207,7 @@ func CheckStyles(root, designDirectory string, exclusions []string) ([]string, e
 		links = append(links, ReadStyleImports(text, extension, relative)...)
 		if markupExtensions[extension] {
 			markup := ParseMarkup(text, extension)
+			pages = append(pages, markup)
 			for _, element := range markup.Elements {
 				if link, found := ReadStyleLink(element, relative); found {
 					links = append(links, link)
@@ -242,7 +245,7 @@ func CheckStyles(root, designDirectory string, exclusions []string) ([]string, e
 		everyRule = append(everyRule, sources[index].Rules...)
 		everyRule = append(everyRule, sources[index].Inline...)
 	}
-	model := BuildTypeModel(everyRule)
+	model := BuildTypeModel(everyRule, pages...)
 
 	for _, source := range sources {
 		var findings []Finding
@@ -267,9 +270,10 @@ type StyleLink struct {
 }
 
 type TypeModel struct {
-	Base  map[string]map[int]bool
-	Size  map[string]bool
-	Fluid map[string]bool
+	Base    map[string]map[int]bool
+	Size    map[string]bool
+	Fluid   map[string]bool
+	Verdict map[string]string
 }
 
 func ReadMediaAttribute(attributes string) string {
@@ -475,8 +479,8 @@ func NormalizeSelector(alternative string) string {
 	return string(normalized)
 }
 
-func BuildTypeModel(rules []StyleRule) TypeModel {
-	model := TypeModel{map[string]map[int]bool{}, map[string]bool{"font-size": true}, map[string]bool{}}
+func BuildTypeModel(rules []StyleRule, pages ...*Markup) TypeModel {
+	model := TypeModel{map[string]map[int]bool{}, map[string]bool{"font-size": true}, map[string]bool{}, map[string]string{}}
 	weak := map[string]bool{}
 	for changed := true; changed; {
 		changed = false
@@ -530,22 +534,8 @@ func BuildTypeModel(rules []StyleRule) TypeModel {
 		}
 		model.Base[overriding.key][pixels] = true
 	}
+	JudgeSteps(rules, pages, &model)
 	return model
-}
-
-func StepsBelowDisplay(rule StyleRule, property string, pixels int, model TypeModel) bool {
-	for _, alternative := range SplitTopLevel(rule.Selector) {
-		bases := model.Base[NormalizeSelector(alternative)+"|"+NameSizeProperty(property)]
-		if len(bases) == 0 {
-			bases = map[int]bool{-1: true}
-		}
-		for from := range bases {
-			if from < 0 && pixels < 40 || from >= 0 && pixels != from && max(pixels, from) < 40 {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 func ReadsSize(value string, model TypeModel) bool {
@@ -577,7 +567,7 @@ func FindTypeStepProblems(rules []StyleRule, model TypeModel) []Finding {
 			if !IsSizeQuery(rule) {
 				continue
 			}
-			pixels, bare := ReadBareSize(property, value)
+			_, bare := ReadBareSize(property, value)
 			tokenPixels, token := ReadBareSize("font-size", value)
 			switch {
 			case property == "all":
@@ -591,8 +581,8 @@ func FindTypeStepProblems(rules []StyleRule, model TypeModel) []Finding {
 			case strings.HasPrefix(property, "--") && !isSize && token && tokenPixels < 40:
 				report("%s carries a size below --text-40 in a query", property)
 			case isSize:
-				if StepsBelowDisplay(rule, property, pixels, model) {
-					report("%s changes with the viewport", property)
+				if reason := model.Verdict[DeclarationKey(rule, declaration)]; reason != "" {
+					report("%s %s", property, reason)
 				}
 			}
 		}
