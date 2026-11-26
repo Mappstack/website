@@ -83,8 +83,7 @@ mark{background:transparent;color:inherit;font-weight:var(--weight-semibold);}
 .input::placeholder{color:var(--color-text-secondary);opacity:1;}
 textarea.input{height:auto;min-height:calc(var(--size-control) * 3);padding:var(--space-8) var(--space-12);line-height:var(--leading-body);resize:vertical;}
 .input--inset{height:auto;min-height:var(--size-control-sm);padding:0 var(--space-8);margin:0 calc(var(--space-8) * -1);width:calc(100% + var(--space-16));background:transparent;font-size:inherit;}
-.input--code{font-family:var(--font-mono);font-size:var(--text-13);}
-@media (pointer:coarse){.input--code{font-size:var(--text-17);}}
+.input--code{font-family:var(--font-mono);font-size:var(--text-17);}
 textarea.input--code{line-height:var(--leading-code);white-space:pre;overflow:auto;overflow-wrap:normal;}
 .input--prominent{height:var(--size-control);padding:0 var(--space-16);border:var(--size-hairline) solid var(--color-border-strong);border-radius:var(--radius-12);background:var(--color-surface);}
 .input:disabled{opacity:var(--opacity-disabled);cursor:not-allowed;}
@@ -194,8 +193,9 @@ button.chip:active,a.chip:active,label.chip:active{background:var(--color-fill-s
 .filters{display:flex;flex-wrap:wrap;gap:var(--space-8);margin:var(--space-12) 0;}
 
 .navbar{position:sticky;top:0;z-index:var(--z-toolbar);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--space-16);height:var(--size-bar);padding:0 var(--space-24);background:var(--color-bar);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);border-bottom:var(--size-hairline) solid var(--color-hairline);}
-.navbar__left{display:flex;align-items:center;gap:var(--space-8);justify-self:start;min-width:0;max-width:100%;}
-.navbar__center{display:flex;align-items:center;gap:var(--space-8);justify-self:center;min-width:0;overflow:hidden;}
+.navbar__left{display:flex;align-items:center;gap:var(--space-8);justify-self:start;min-width:var(--size-control);max-width:100%;}
+.navbar__left:empty{min-width:0;}
+.navbar__center{display:flex;align-items:center;gap:var(--space-8);justify-self:center;min-width:0;max-width:100%;overflow:hidden;}
 .navbar__right{grid-column:3;display:flex;align-items:center;gap:var(--space-8);justify-self:end;}
 .navbar:not(:has(> .navbar__center:not(:empty))){grid-template-columns:auto 1fr auto;}
 .navbar__title{min-width:0;overflow:hidden;font-size:var(--text-17);font-weight:var(--weight-semibold);white-space:nowrap;text-overflow:ellipsis;}

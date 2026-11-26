@@ -32,7 +32,8 @@ var voiceRules = []VoiceRule{
 	{Name: "numeral: use digits, 1 hour, 90 days", Pattern: regexp.MustCompile(`(?i)\b(one|two|three|four|five|six|seven|eight|nine|ten|twelve|fifteen|twenty|thirty|sixty|ninety) (second|minute|hour|day|week|month|year)s?\b`), Display: true},
 	{Name: "contraction: use isn't, can't", Pattern: regexp.MustCompile(`(?i)\b(is|are|was|were|do|does|did|can|could|will|would|should|has|have|had) not\b|\bcannot\b`), Policy: true},
 	{Name: "spelling: use US English", Pattern: regexp.MustCompile(`(?i)\b(organis\w*|colour\w*|behaviour\w*|favourite\w*|cancell(ed|ing)|analys(e|ed|ing)|optimis\w*|authoris\w*|customis\w*|centre|catalogue|programme|travell\w*)\b`), Names: true},
-	{Name: "word: vague, say what it does or give the number", Pattern: regexp.MustCompile(`(?i)\b(seamless(ly)?|powerful|easy)\b|\bcoming soon\b`)},
+	{Name: "word: vague, say what it does or give the number", Pattern: regexp.MustCompile(`(?i)\b(seamless(ly)?|powerful|easy|intuitive|user-friendly)\b|\bcoming soon\b`)},
+	{Name: "word: hype, say what it does or give the number", Pattern: regexp.MustCompile(`(?i)\b(delightful|sleek|pixel-perfect|best-in-class|world-class)\b`)},
 	{Name: "separator: use a spaced middle dot", Pattern: regexp.MustCompile(`\w \| \w`)},
 }
 

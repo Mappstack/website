@@ -12,8 +12,8 @@ Plain, exact, calm. Say what it is or what happens, in as few words as it takes,
 | We are | We are not |
 |---|---|
 | Plain: everyday words, short sentences | Jargon, long setups |
-| Exact: real numbers, limits, what happens next | Vague: soon, seamless, powerful, easy |
-| Calm: say it once | Hype, exclamation marks, emoji, urgency |
+| Exact: real numbers, limits, what happens next | Vague: soon, seamless, powerful, easy, intuitive, user-friendly |
+| Calm: say it once | Hype: delightful, sleek, modern or clean as a label, pixel-perfect, best-in-class, world-class; exclamation marks, emoji, urgency |
 | Bold when you can prove it: Zero dependencies. | Big claims you can't back up |
 | Direct: you and we, contractions | Corporate or passive: please be advised |
 | Honest: what it can't do, what we don't collect | Overpromising |
