@@ -174,6 +174,9 @@ func ListContrastPairs() []ContrastPair {
 	for _, fill := range []string{"--color-primary", "--color-primary-hover"} {
 		addPair("--color-on-primary", 4.5, all, fill)
 	}
+	for _, surface := range surfaces {
+		addPair("--color-mark-olive", 4.5, all, surface)
+	}
 	addPair("--color-on-error", 3, standard, "--color-error")
 	addPair("--color-on-error", 4.5, more, "--color-error")
 	for _, base := range surfaces {

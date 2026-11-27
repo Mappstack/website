@@ -45,6 +45,7 @@
   --color-mark-green:var(--base-mark-green);
   --color-mark-yellow:var(--base-mark-yellow);
   --color-mark-pink:var(--base-mark-pink);
+  --color-mark-olive:var(--base-mark-olive);
 
   --color-ring-1-start:var(--base-ring-1-start);
   --color-ring-1-end:var(--base-ring-1-end);
@@ -133,6 +134,8 @@
 
     --color-avatar-start:var(--base-gray-800);
     --color-avatar-end:var(--base-gray-900);
+
+    --color-mark-olive:var(--base-mark-olive-dark);
 
     --color-canvas-dot:rgba(255,255,255,0.08);
 

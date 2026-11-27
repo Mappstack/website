@@ -1,6 +1,6 @@
 # Design system
 
-One system, four profiles. The system holds tokens, components and behaviors; every product in `products.json` loads them, and its character is a short profile. Each product lays out and presents its own pages, fit for their purpose, from the tokens.
+One system, five profiles. The system holds tokens, components and behaviors; every product in `products.json` loads them, and its character is a short profile. Each product lays out and presents its own pages, fit for their purpose, from the tokens.
 
 ## Use
 
@@ -41,7 +41,7 @@ In this repo `styles.css` imports the token files, `components.css` and the prod
 
 Names: numbers by their px value at the default font size, roles by their job, state last (`--color-primary-hover`). `--text-*` is a size only; every color starts with `--color-`.
 
-Colors: `--color-primary`, `-primary-hover`, `-on-primary`, `-accent`, `-accent-hover` (Apple's link blue: #0066cc, #2997ff in dark, darker and lighter again under Increase Contrast; blue is for links only, the owner's word of 24 November 2026, so pages do not look like Apple's), `-text`, `-text-secondary`, `-background`, `-background-grouped`, `-surface`, `-surface-raised`, `-surface-sunken`, `-surface-canvas`, `-fill-subtle`, `-fill`, `-fill-strong`, `-selected`, `-hairline`, `-border-strong`, `-focus`, `-bar`, `-bar-grouped` (sidebar), `-scrim`, `-on-scrim`, `-backdrop`, `-{error,warn,success}`, `-{error,warn,success}-text`, `-on-error`, `-avatar-start`, `-avatar-end`, `-canvas-dot`, `-mark-{blue,green,yellow,pink}`, `-ring-{1,2,3}-{start,end}` (the three rings of a ring chart, each sweeping from its start to its end; they pass 3:1 as large text on plain surfaces).
+Colors: `--color-primary`, `-primary-hover`, `-on-primary`, `-accent`, `-accent-hover` (Apple's link blue: #0066cc, #2997ff in dark, darker and lighter again under Increase Contrast; blue is for links only, the owner's word of 24 November 2026, so pages do not look like Apple's), `-text`, `-text-secondary`, `-background`, `-background-grouped`, `-surface`, `-surface-raised`, `-surface-sunken`, `-surface-canvas`, `-fill-subtle`, `-fill`, `-fill-strong`, `-selected`, `-hairline`, `-border-strong`, `-focus`, `-bar`, `-bar-grouped` (sidebar), `-scrim`, `-on-scrim`, `-backdrop`, `-{error,warn,success}`, `-{error,warn,success}-text`, `-on-error`, `-avatar-start`, `-avatar-end`, `-canvas-dot`, `-mark-{blue,green,yellow,pink,olive}` (olive passes 4.5:1 as text on every surface), `-ring-{1,2,3}-{start,end}` (the three rings of a ring chart, each sweeping from its start to its end; they pass 3:1 as large text on plain surfaces).
 
 Hues are Apple's system colors, light and dark. Status hues are for fills and glyphs; text uses the `-text` tokens, Apple's accessible shades, on plain surfaces only. `-on-error` is the text on a red fill. Under Increase Contrast (`prefers-contrast:more`) every hue switches to Apple's accessible value.
 
@@ -157,7 +157,7 @@ States: hover one fill step up, press `scale(var(--press-scale))` with the stron
 
 ## Profiles
 
-`profiles/{app,website,stackure,ayuvu}.css` set `--page-background`, `--page-title-size`, `--page-title-tracking`, `--page-width`, `--page-gutter` and `--card-border-color`. Markup choices: app uses a collapsible text-only sidebar, stacked forms, empty states without glyphs and the small wordmark. website uses the nav bar only, display titles and the large wordmark. stackure uses a sidebar with glyphs, a tab bar on phones, a folding large title, grouped forms, empty states with glyphs, the large wordmark on public pages and the small one inside. ayuvu uses the nav bar only with a back link in the page header, a folding large title, stacked forms whose save action is the bar's primary pill, confirmations for every delete, empty states with glyphs, the small wordmark, and a flow of one question per screen with rings for its result.
+`profiles/{app,website,stackure,ayuvu,magina-viva}.css` set `--page-background`, `--page-title-size`, `--page-title-tracking`, `--page-width`, `--page-gutter` and `--card-border-color`. Markup choices: app uses a collapsible text-only sidebar, stacked forms, empty states without glyphs and the small wordmark. website uses the nav bar only, display titles and the large wordmark. stackure uses a sidebar with glyphs, a tab bar on phones, a folding large title, grouped forms, empty states with glyphs, the large wordmark on public pages and the small one inside. ayuvu uses the nav bar only with a back link in the page header, a folding large title, stacked forms whose save action is the bar's primary pill, confirmations for every delete, empty states with glyphs, the small wordmark, and a flow of one question per screen with rings for its result. magina-viva uses `--color-mark-olive` only for Mágina Viva itself and for money kept local, only real photos of real people and places, and Arial in a Word file where one is required.
 
 ## Sync
 
