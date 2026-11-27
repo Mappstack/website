@@ -221,6 +221,26 @@
         });
     }
 
+    const backBars = new ResizeObserver(function (entries) {
+        entries.forEach(function (entry) { fitBackLink(entry.target); });
+    });
+
+    function fitBackLink(bar) {
+        const link = bar.querySelector(":scope > .backlink");
+        const label = link && link.querySelector(".backlink__label");
+        if (!label) return;
+        link.classList.add("is-whole");
+        const style = getComputedStyle(bar);
+        const right = bar.querySelector(":scope > .navbar__right");
+        const start = parseFloat(style.paddingLeft);
+        const room = (bar.clientWidth - start - parseFloat(style.paddingRight) - (right ? right.offsetWidth : 0)) / 2 - parseFloat(style.columnGap);
+        link.classList.toggle("is-whole", link.getBoundingClientRect().right - bar.getBoundingClientRect().left - start <= room + 0.5);
+    }
+
+    function watchBackLinks(scope) {
+        scope.querySelectorAll(".navbar > .backlink").forEach(function (link) { backBars.observe(link.parentElement); });
+    }
+
     function moveLevel(from, direction) {
         if (!from || reducedMotion.matches) return;
         const to = sheet.offsetHeight;
@@ -237,10 +257,12 @@
     function fillSheet(content, direction, fresh) {
         const from = sheet.open ? sheet.offsetHeight : 0;
         const region = sheet.querySelector(":scope > [data-announcer]");
+        sheet.querySelectorAll(":scope > .navbar").forEach(function (bar) { backBars.unobserve(bar); });
         sheet.replaceChildren(content);
         if (region) sheet.append(region);
         sheet.setAttribute("aria-label", readTitle(sheet) || "Sheet");
         if (sheet.levels.length) addBackLinks(sheet.levels[sheet.levels.length - 1].title);
+        watchBackLinks(sheet);
         if (fresh) {
             bindSearches(sheet);
             initTabs(sheet);
@@ -1187,6 +1209,7 @@
         bindSearches(document);
         initTabs(document);
         syncForms(document);
+        watchBackLinks(document);
     }
 
     const FormFields = "input:not([type=hidden], [type=submit], [type=button], [type=reset], [type=image]), select, textarea";
