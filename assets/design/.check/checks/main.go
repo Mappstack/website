@@ -7,7 +7,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "usage: check contrast | literals <dir> [exclude...] | voice <dir> [exclude...] | restyle <product dir> <design dir> [exclude...] | usage <product dir> <design dir> [previous components.css] | buttons <dir> [exclude...] | classes|components|pages|styles <product dir> <design dir> [exclude...] | profiles <product dir> <profile> [exclude...] | background | rename <renames.json> <dir> [skip dir...]")
+		fmt.Fprintln(os.Stderr, "usage: check contrast | literals <dir> [exclude...] | voice <dir> [exclude...] | restyle <product dir> <design dir> [exclude...] | usage <product dir> <design dir> [previous components.css] | buttons <dir> [exclude...] | validation <dir> [exclude...] | classes|components|pages|styles <product dir> <design dir> [exclude...] | profiles <product dir> <profile> [exclude...] | background | rename <renames.json> <dir> [skip dir...]")
 		os.Exit(2)
 	}
 	var problems []string
@@ -31,6 +31,8 @@ func main() {
 		problems, err = CheckProfiles(os.Args[2], os.Args[3], os.Args[4:])
 	case "buttons":
 		problems, err = CheckButtons(os.Args[2], os.Args[3:])
+	case "validation":
+		problems, err = CheckValidation(os.Args[2], os.Args[3:])
 	case "voice":
 		problems, err = CheckVoice(os.Args[2], os.Args[3:])
 	case "usage":

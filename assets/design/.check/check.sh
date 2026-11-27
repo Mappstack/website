@@ -8,7 +8,7 @@ cd "$check"
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 (cd "$work" && go build -o "$work/check" "$check"/checks/*.go) || exit 1
-for kind in literals voice restyle buttons classes components pages styles profiles; do
+for kind in literals voice restyle buttons validation classes components pages styles profiles; do
 	case $kind in
 	(restyle|classes|components|pages|styles) xargs "$work/check" "$kind" "$product" "$design" < exclusions.txt || status=1 ;;
 	(profiles) xargs "$work/check" profiles "$product" "$(cat profile.txt)" < exclusions.txt || status=1 ;;
